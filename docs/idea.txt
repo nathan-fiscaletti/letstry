@@ -40,3 +40,63 @@ you can export a session with `lt session export <name|pid> <path>`
 you can save a session as a template using `lt session save <name|pid> <template-name>`
 
 i don't see why it only has to wrap vscode, why not support other editors (or any program you want, any process for that matter)
+
+
+discord message:
+
+n:
+i think the idea branched off of me wanting something and not having it, and my personal workflow is vscode. so it's just the first thing that came to mind and i went with it
+nah, it's not even a github code space or even a repo
+it's just a vscode instance, and an empty directory.
+the directory can be seeded with a template, or a github repository, or nothing. 
+when you close vscode, the directory is deleted
+alternately, you can choose to save what you've worked on either to disk or to a github repository
+or you can save it as a template for future use
+that's the core idea.
+essentially, a mix of create-react-app and those "sandboxes" you'll find online, but easier access and more features surrounding managing it. 
+
+j:
+and you're in your local env that you are used to
+
+n:
+exactly
+it would make my workflow so much cleaner
+again, i'm sure either a tool  or combination of tools exists that already does this or something similar, but i like being able to build it myself the exact way i want for my workflow lol
+
+j:
+im actually not sure if it does
+at least i haven't heard of it
+There is a repo i saw recntly that is a create-react-app but for go but not the temp project thing you're doing
+and this is language agnostic
+
+n:
+i'm thinking something like this for the general use command:
+letstry <name> -with <template/repo>
+for example:
+letstry timelines-test -with gitlab.com/pulsarinformatics/fatiguemeter.git@master
+or you could do like
+letstry timelines-test -with C:\git-repos\fatiguemeter
+which would just duplicate the existing directory
+
+j:
+def support git + local repo in that -with tag
+maybe -from is better than -with 
+or just -template
+makes it more explicit
+
+n:
+yeah, but i want the command to be easy to use.
+
+I want the -with (or -from) flag to allow an argument of either remote git repository, a local directory, or one of the names of the templates you've saved or imported into letstry.
+
+letstry timelines-test -from <path>
+letstry timelines-test -from <repo-url>
+letstry timelines-test -from t:<template-name> 
+
+or something like that.
+and i plan to alias letstry to lt.
+
+the path and repo url would be easy enough to discern from eachother, but i think the t: prefix would be useful since repo names can be any string. 
+
+or -from could be used for directory / git repo url
+and -with could be used for template
