@@ -2,6 +2,8 @@
 
 letstry is a powerful tool designed to streamline project creation and management within VSCode, built in Golang. It provides users with a suite of features to create, manage, and export project templates, ensuring a smooth workflow for developers.
 
+> If you want to understand in what ways letstry can help you, you are highly encouraged to read the [Use Cases](./docs/use-cases.md) section.
+
 ## Features
 
 - **Project Creation**: Create new projects with a simple command. The tool initializes a temporary directory and opens it in VSCode for quick prototyping.
