@@ -38,3 +38,5 @@ you can list sessions with `lt session list` and you will get their name ( if an
 you can kill a session with `lt session kill <name|pid>`
 you can export a session with `lt session export <name|pid> <path>`
 you can save a session as a template using `lt session save <name|pid> <template-name>`
+
+i don't see why it only has to wrap vscode, why not support other editors (or any program you want, any process for that matter)
