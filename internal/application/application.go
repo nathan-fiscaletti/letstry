@@ -30,7 +30,7 @@ func (a *application) Start() {
 	manager := session_manager.GetSessionManager()
 	arguments := a.GetArguments()
 
-	session, err := manager.CreateSession(arguments.SessionName, arguments)
+	session, err := manager.CreateSession(arguments)
 	if err != nil {
 		logging.GetLogger().Printf("Error: %s\n", err.Error())
 		os.Exit(1)
