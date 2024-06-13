@@ -32,7 +32,7 @@ func (s *sessionManager) GetRunningSessions() ([]session, error) {
 	var sessions []session = make([]session, 0)
 
 	var defaultSessions []byte
-	defaultSessions, err := json.Marshal(sessions)
+	defaultSessions, err := json.MarshalIndent(sessions, "", "    ")
 	if err != nil {
 		return sessions, fmt.Errorf("failed to marshal default sessions: %v", err)
 	}

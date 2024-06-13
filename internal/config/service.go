@@ -22,7 +22,7 @@ func GetConfig() (*Config, error) {
 		defaultConfig := getDefaultConfig()
 
 		var defaultValue []byte
-		defaultValue, err := json.Marshal(defaultConfig)
+		defaultValue, err := json.MarshalIndent(defaultConfig, "", "    ")
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal default config: %v", err)
 		}
