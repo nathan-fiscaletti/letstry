@@ -28,34 +28,10 @@ func GetSessionManager() *sessionManager {
 	return mgr
 }
 
-func (s *sessionManager) GetRunningSessions() ([]session, error) {
-	var sessions []session = make([]session, 0)
-
-	var defaultSessions []byte
-	defaultSessions, err := json.MarshalIndent(sessions, "", "    ")
-	if err != nil {
-		return sessions, fmt.Errorf("failed to marshal default sessions: %v", err)
-	}
-
-	file, err := s.storage.OpenFileWithDefaultContent("sessions.json", defaultSessions)
-	if err != nil {
-		return sessions, fmt.Errorf("failed to open sessions file: %v", err)
-	}
-	defer file.Close()
-
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&sessions)
-	if err != nil {
-		return sessions, fmt.Errorf("failed to decode sessions file: %v", err)
-	}
-
-	return sessions, nil
-}
-
-func (s *sessionManager) CreateSession(args arguments.Arguments) (session, error) {
+func (s *sessionManager) CreateSession(args arguments.CreateSessionArguments) (session, error) {
 	var zeroValue session
 
-	sessions, err := s.GetRunningSessions()
+	sessions, err := s.ListSessions(arguments.ListSessionsArguments{})
 	if err != nil {
 		return zeroValue, err
 	}
@@ -99,6 +75,7 @@ func (s *sessionManager) CreateSession(args arguments.Arguments) (session, error
 		PID:       int32(cmd.Process.Pid),
 		Location:  tempDir,
 		Arguments: args,
+		Editor:    editor,
 	}
 
 	// Persist the session to the sessions file
@@ -110,11 +87,38 @@ func (s *sessionManager) CreateSession(args arguments.Arguments) (session, error
 	}
 	defer file.Close()
 
-	encoder := json.NewEncoder(file)
-	err = encoder.Encode(sessions)
+	data, err := json.MarshalIndent(sessions, "", "    ")
 	if err != nil {
-		return zeroValue, fmt.Errorf("failed to encode sessions file: %v", err)
+		return zeroValue, fmt.Errorf("failed to marshal sessions: %v", err)
+	}
+	_, err = file.Write(data)
+	if err != nil {
+		return zeroValue, fmt.Errorf("failed to write sessions: %v", err)
 	}
 
 	return newSession, nil
+}
+
+func (s *sessionManager) ListSessions(args arguments.ListSessionsArguments) ([]session, error) {
+	var sessions []session = make([]session, 0)
+
+	var defaultSessions []byte
+	defaultSessions, err := json.MarshalIndent(sessions, "", "    ")
+	if err != nil {
+		return sessions, fmt.Errorf("failed to marshal default sessions: %v", err)
+	}
+
+	file, err := s.storage.OpenFileWithDefaultContent("sessions.json", defaultSessions)
+	if err != nil {
+		return sessions, fmt.Errorf("failed to open sessions file: %v", err)
+	}
+	defer file.Close()
+
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&sessions)
+	if err != nil {
+		return sessions, fmt.Errorf("failed to decode sessions file: %v", err)
+	}
+
+	return sessions, nil
 }

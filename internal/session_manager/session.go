@@ -2,14 +2,16 @@ package session_manager
 
 import (
 	"github.com/nathan-fiscaletti/letstry/internal/arguments"
+	"github.com/nathan-fiscaletti/letstry/internal/config"
 	"github.com/shirou/gopsutil/v3/process"
 )
 
 type session struct {
-	Name      string              `json:"name"`
-	PID       int32               `json:"pid"`
-	Location  string              `json:"location"`
-	Arguments arguments.Arguments `json:"arguments"`
+	Name      string                           `json:"name"`
+	PID       int32                            `json:"pid"`
+	Location  string                           `json:"location"`
+	Arguments arguments.CreateSessionArguments `json:"arguments"`
+	Editor    config.Editor                    `json:"editor"`
 }
 
 // GetProcess returns the process for the session

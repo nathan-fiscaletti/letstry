@@ -28,15 +28,28 @@ type application struct {
 // Start starts the application
 func (a *application) Start() {
 	manager := session_manager.GetSessionManager()
-	arguments := a.GetArguments()
+	args := a.GetArguments()
 
-	session, err := manager.CreateSession(arguments)
-	if err != nil {
-		logging.GetLogger().Printf("Error: %s\n", err.Error())
-		os.Exit(1)
+	switch args.Command {
+	case arguments.CommandNewSession:
+		session, err := manager.CreateSession(*args.CreateSessionArguments)
+		if err != nil {
+			logging.GetLogger().Printf("Error: %s\n", err.Error())
+			os.Exit(1)
+		}
+
+		logging.GetLogger().Printf("Session %s created with PID %d\n", session.Arguments.SessionName, session.PID)
+	case arguments.CommandListSessions:
+		sessions, err := manager.ListSessions(*args.ListSectionsArguments)
+		if err != nil {
+			logging.GetLogger().Printf("Error: %s\n", err.Error())
+			os.Exit(1)
+		}
+
+		for _, session := range sessions {
+			logging.GetLogger().Printf("Session %s with PID %d\n", session.Arguments.SessionName, session.PID)
+		}
 	}
-
-	logging.GetLogger().Printf("Session %s created with PID %d\n", session.Arguments.SessionName, session.PID)
 }
 
 // GetArguments returns the application arguments
