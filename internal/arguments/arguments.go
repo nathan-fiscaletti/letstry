@@ -13,18 +13,18 @@ const (
 )
 
 type WithArgument struct {
-	ArgumentType WithArgumentType
-	Value        string
+	ArgumentType WithArgumentType `json:"type"`
+	Value        string           `json:"value"`
 }
 
 type FromArgument struct {
-	TemplateName string
+	TemplateName string `json:"template_name"`
 }
 
 type Arguments struct {
-	WithArgument *WithArgument
-	FromArgument *FromArgument
-	SessionName  string
+	SessionName  string        `json:"session_name"`
+	WithArgument *WithArgument `json:"with"`
+	FromArgument *FromArgument `json:"from"`
 }
 
 // ParseArguments parses the command line arguments and returns an Arguments struct
