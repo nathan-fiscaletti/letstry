@@ -52,7 +52,7 @@ func (s *sessionManager) GetRunningSessions() ([]session, error) {
 	return sessions, nil
 }
 
-func (s *sessionManager) CreateSession(name string, args arguments.Arguments) (session, error) {
+func (s *sessionManager) CreateSession(args arguments.Arguments) (session, error) {
 	var zeroValue session
 
 	sessions, err := s.GetRunningSessions()
@@ -61,8 +61,8 @@ func (s *sessionManager) CreateSession(name string, args arguments.Arguments) (s
 	}
 
 	for _, session := range sessions {
-		if session.Arguments.SessionName == name {
-			return zeroValue, fmt.Errorf("session with name %s already exists", name)
+		if session.Arguments.SessionName == args.SessionName {
+			return zeroValue, fmt.Errorf("session with name %s already exists", args.SessionName)
 		}
 	}
 
@@ -95,7 +95,7 @@ func (s *sessionManager) CreateSession(name string, args arguments.Arguments) (s
 
 	// Create the session
 	newSession := session{
-		Name:      name,
+		Name:      args.SessionName,
 		PID:       int32(cmd.Process.Pid),
 		Location:  tempDir,
 		Arguments: args,
