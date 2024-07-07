@@ -164,6 +164,7 @@ func (s *sessionManager) MonitorSession(args arguments.MonitorSessionsArguments)
 		if err != nil {
 			return err
 		}
+
 		for _, session := range sessions {
 			if session.PID == int32(args.PID) {
 				err := s.removeSession(session.Name)
@@ -204,6 +205,9 @@ func (s *sessionManager) removeSession(name string) error {
 			if err != nil {
 				return fmt.Errorf("failed to write sessions: %v", err)
 			}
+
+			// Give the process manager time to settle
+			time.Sleep(1 * time.Second)
 
 			// Remove the temporary directory
 			err = os.RemoveAll(session.Location)
