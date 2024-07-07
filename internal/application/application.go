@@ -39,6 +39,7 @@ func (a *application) Start() {
 		}
 
 		logging.GetLogger().Printf("Session %s created with PID %d\n", session.Arguments.SessionName, session.PID)
+
 	case arguments.CommandListSessions:
 		sessions, err := manager.ListSessions(*args.ListSectionsArguments)
 		if err != nil {
@@ -48,6 +49,13 @@ func (a *application) Start() {
 
 		for _, session := range sessions {
 			logging.GetLogger().Printf("Session %s with PID %d\n", session.Arguments.SessionName, session.PID)
+		}
+
+	case arguments.CommandMonitorSession:
+		err := manager.MonitorSession(*args.MonitorSessionsArguments)
+		if err != nil {
+			logging.GetLogger().Printf("Error: %s\n", err.Error())
+			os.Exit(1)
 		}
 	}
 }

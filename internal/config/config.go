@@ -1,11 +1,20 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"path/filepath"
+	"time"
+)
 
 type Editor struct {
-	Name     string `json:"name"`
-	ExecPath string `json:"path"`
-	Args     string `json:"args"`
+	Name                string        `json:"name"`
+	ExecPath            string        `json:"path"`
+	Args                string        `json:"args"`
+	ProcessCaptureDelay time.Duration `json:"process_capture_delay"`
+}
+
+func (e Editor) GetExecName() string {
+	return filepath.Base(e.ExecPath)
 }
 
 type Config struct {

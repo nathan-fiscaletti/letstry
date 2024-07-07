@@ -7,6 +7,7 @@ import (
 	"os/user"
 	"path/filepath"
 	"runtime"
+	"time"
 
 	"github.com/nathan-fiscaletti/letstry/internal/storage"
 )
@@ -66,9 +67,10 @@ func getDefaultConfig() *Config {
 
 	editors := []Editor{
 		{
-			Name:     "vscode",
-			ExecPath: vsCodePath,
-			Args:     "",
+			Name:                "vscode",
+			ExecPath:            vsCodePath,
+			Args:                "-n",
+			ProcessCaptureDelay: time.Second * 2,
 		},
 	}
 
