@@ -1,6 +1,7 @@
 package session_manager
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/nathan-fiscaletti/letstry/internal/arguments"
 	"github.com/nathan-fiscaletti/letstry/internal/config"
+	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/storage"
 	"github.com/shirou/gopsutil/v3/process"
 )
@@ -157,26 +159,44 @@ func (s *sessionManager) ListSessions(args arguments.ListSessionsArguments) ([]s
 	return sessions, nil
 }
 
-func (s *sessionManager) MonitorSession(args arguments.MonitorSessionsArguments) error {
+func (s *sessionManager) MonitorSession(ctx context.Context, args arguments.MonitorSessionsArguments) error {
 	// Start monitoring the session
 	return s.monitorProcessClosed(int32(args.PID), func() error {
-		sessions, err := s.ListSessions(arguments.ListSessionsArguments{})
+		session, err := s.GetSessionForPID(args.PID)
 		if err != nil {
 			return err
 		}
 
-		for _, session := range sessions {
-			if session.PID == int32(args.PID) {
-				err := s.removeSession(session.Name)
-				if err != nil {
-					return err
-				}
-				break
-			}
+		logger, err := logging.LoggerFromContext(ctx)
+		if err != nil {
+			return err
+		}
+
+		logger.Printf("cleaning up session: %s (process closed, PID %d)\n", session.Name, session.PID)
+
+		err = s.removeSession(session.Name)
+		if err != nil {
+			return err
 		}
 
 		return nil
 	})
+}
+
+// GetSessionForPID returns the session for the given PID
+func (s *sessionManager) GetSessionForPID(pid int) (session, error) {
+	sessions, err := s.ListSessions(arguments.ListSessionsArguments{})
+	if err != nil {
+		return session{}, err
+	}
+
+	for _, session := range sessions {
+		if session.PID == int32(pid) {
+			return session, nil
+		}
+	}
+
+	return session{}, fmt.Errorf("session with PID %d not found", pid)
 }
 
 func (s *sessionManager) removeSession(name string) error {
@@ -271,10 +291,7 @@ func (s *sessionManager) monitorProcessClosed(pid int32, callback func() error) 
 		}
 
 		if !exists {
-			fmt.Printf("Process %v: %s\n", pid, "does not exist")
 			return callback()
-		} else {
-			fmt.Printf("Process %v: %s\n", pid, "exist")
 		}
 
 		time.Sleep(1 * time.Second) // Check every second

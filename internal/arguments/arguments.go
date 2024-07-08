@@ -17,6 +17,12 @@ const (
 	CommandMonitorSession Command = "monitor"
 )
 
+func PrivateCommands() []Command {
+	return []Command{
+		CommandMonitorSession,
+	}
+}
+
 type Arguments struct {
 	Command                  Command
 	CreateSessionArguments   *CreateSessionArguments

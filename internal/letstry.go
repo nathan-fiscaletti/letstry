@@ -1,9 +1,13 @@
 package internal
 
-import "github.com/nathan-fiscaletti/letstry/internal/application"
+import (
+	"context"
+
+	"github.com/nathan-fiscaletti/letstry/internal/application"
+)
 
 func LetsTry() {
-	// This function is called when the package is imported
-	app := application.NewApplication()
-	app.Start()
+	application.NewApplication(
+		context.Background(),
+	).Start()
 }
