@@ -11,7 +11,7 @@ type Command interface {
 	Execute(ctx context.Context) error
 }
 
-func GetCommand(ctx context.Context, args arguments.Arguments) (Command, error) {
+func GetCommand(ctx context.Context, args arguments.ParsedArguments) (Command, error) {
 	var cmd Command
 
 	switch args.Command {
@@ -26,6 +26,10 @@ func GetCommand(ctx context.Context, args arguments.Arguments) (Command, error) 
 	case arguments.CommandMonitorSession:
 		cmd = MonitorSessionCommand{
 			Arguments: args.MonitorSessionsArguments,
+		}
+	case arguments.CommandHelp:
+		cmd = HelpCommand{
+			Arguments: args.HelpArguments,
 		}
 	}
 

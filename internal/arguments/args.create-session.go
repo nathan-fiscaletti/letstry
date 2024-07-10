@@ -40,12 +40,20 @@ type CreateSessionArguments struct {
 	FromArgument *FromArgument `json:"from"`
 }
 
+func (a *CreateSessionArguments) Name() string {
+	return CommandNewSession.String()
+}
+
+func (a *CreateSessionArguments) FlagSet() *flag.FlagSet {
+	return a.Flags().FlagSet
+}
+
 func (a *CreateSessionArguments) Flags() *createSessionArgumentsFlags {
 	var sessionName *string
 	var withValue *string
 	var fromTemplate *string
 
-	cmd := flag.NewFlagSet("new", flag.ExitOnError)
+	cmd := flag.NewFlagSet(a.Name(), flag.ExitOnError)
 
 	sessionName = cmd.String("name", "", "Name of the session")
 	withValue = cmd.String("with", "", "Repository address or directory path")

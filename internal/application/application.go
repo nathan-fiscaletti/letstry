@@ -13,7 +13,7 @@ import (
 
 type application struct {
 	context   context.Context
-	arguments arguments.Arguments
+	arguments arguments.ParsedArguments
 }
 
 // NewApplication creates a new application instance
@@ -90,7 +90,7 @@ func (a *application) Start() {
 }
 
 // GetArguments returns the application arguments
-func (a *application) GetArguments() arguments.Arguments {
+func (a *application) GetArguments() arguments.ParsedArguments {
 	return a.arguments
 }
 

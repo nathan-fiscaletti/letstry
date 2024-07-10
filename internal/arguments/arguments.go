@@ -1,38 +1,42 @@
 package arguments
 
 import (
+	"flag"
 	"fmt"
 	"os"
 )
 
-type Command string
-
-func (c Command) String() string {
-	return string(c)
+type CommandArguments interface {
+	Name() string
+	Scan(args []string) error
+	FlagSet() *flag.FlagSet
 }
 
-const (
-	CommandNewSession     Command = "new"
-	CommandListSessions   Command = "list"
-	CommandMonitorSession Command = "monitor"
-)
-
-func PrivateCommands() []Command {
-	return []Command{
-		CommandMonitorSession,
+func GetPublicCommandArguments() []CommandArguments {
+	return []CommandArguments{
+		&CreateSessionArguments{},
+		&ListSessionsArguments{},
+		&HelpArguments{},
 	}
 }
 
-type Arguments struct {
-	Command                  Command
+func GetPrivateCommandArguments() []CommandArguments {
+	return []CommandArguments{
+		&MonitorSessionArguments{},
+	}
+}
+
+type ParsedArguments struct {
+	Command                  CommandName
 	CreateSessionArguments   *CreateSessionArguments
 	ListSectionsArguments    *ListSessionsArguments
 	MonitorSessionsArguments *MonitorSessionArguments
+	HelpArguments            *HelpArguments
 }
 
-func (a Arguments) IsPrivate() bool {
-	for _, cmd := range PrivateCommands() {
-		if a.Command == cmd {
+func (a ParsedArguments) IsPrivate() bool {
+	for _, args := range GetPrivateCommandArguments() {
+		if a.Command == CommandName(args.FlagSet().Name()) {
 			return true
 		}
 	}
@@ -41,10 +45,10 @@ func (a Arguments) IsPrivate() bool {
 }
 
 // ParseArguments parses the command line arguments and returns an Arguments struct
-func ParseArguments() (Arguments, error) {
+func ParseArguments() (ParsedArguments, error) {
 	args := os.Args[1:]
 
-	var cmdArgs Arguments
+	var cmdArgs ParsedArguments
 	var err error
 
 	switch args[0] {
@@ -55,7 +59,7 @@ func ParseArguments() (Arguments, error) {
 		err = sessionArgs.Scan(args[1:])
 
 		if err == nil {
-			cmdArgs = Arguments{
+			cmdArgs = ParsedArguments{
 				Command:                CommandNewSession,
 				CreateSessionArguments: sessionArgs,
 			}
@@ -67,7 +71,7 @@ func ParseArguments() (Arguments, error) {
 		err = listArgs.Scan(args[1:])
 
 		if err == nil {
-			cmdArgs = Arguments{
+			cmdArgs = ParsedArguments{
 				Command:               CommandListSessions,
 				ListSectionsArguments: listArgs,
 			}
@@ -79,9 +83,19 @@ func ParseArguments() (Arguments, error) {
 		monitorArgs := &MonitorSessionArguments{}
 		err = monitorArgs.Scan(args[1:])
 		if err == nil {
-			cmdArgs = Arguments{
+			cmdArgs = ParsedArguments{
 				Command:                  CommandMonitorSession,
 				MonitorSessionsArguments: monitorArgs,
+			}
+		}
+
+	case CommandHelp.String():
+		helpArgs := &HelpArguments{}
+		err = helpArgs.Scan(args[1:])
+		if err == nil {
+			cmdArgs = ParsedArguments{
+				Command:       CommandHelp,
+				HelpArguments: helpArgs,
 			}
 		}
 

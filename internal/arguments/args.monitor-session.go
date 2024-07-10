@@ -19,10 +19,18 @@ type MonitorSessionArguments struct {
 	PID int `json:"pid"`
 }
 
+func (a *MonitorSessionArguments) Name() string {
+	return CommandMonitorSession.String()
+}
+
+func (a *MonitorSessionArguments) FlagSet() *flag.FlagSet {
+	return a.Flags().FlagSet
+}
+
 func (a *MonitorSessionArguments) Flags() *monitorSessionArgumentsFlags {
 	var pid *int
 
-	cmd := flag.NewFlagSet("monitor", flag.ExitOnError)
+	cmd := flag.NewFlagSet(CommandMonitorSession.String(), flag.ExitOnError)
 
 	pid = cmd.Int("pid", -1, "PID of the process to monitor")
 
