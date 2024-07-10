@@ -1,33 +1,48 @@
 package arguments
 
 import (
+	"flag"
 	"fmt"
-	"strconv"
 )
 
-type MonitorSessionsArguments struct {
+type monitorSessionArgumentsFlags struct {
+	*flag.FlagSet
+
+	pid *int
+}
+
+func (c *monitorSessionArgumentsFlags) Parse(args []string) error {
+	return c.FlagSet.Parse(args)
+}
+
+type MonitorSessionArguments struct {
 	PID int `json:"pid"`
 }
 
-func (a *MonitorSessionsArguments) Scan(args []string) error {
-	var pid int
+func (a *MonitorSessionArguments) Flags() *monitorSessionArgumentsFlags {
+	var pid *int
 
-	for i := 0; i < len(args); i++ {
-		if args[i] == "-pid" && i+1 < len(args) {
-			_pid, err := strconv.Atoi(args[i+1])
-			if err != nil {
-				return err
-			}
+	cmd := flag.NewFlagSet("monitor", flag.ExitOnError)
 
-			pid = _pid
-			break
-		}
+	pid = cmd.Int("pid", -1, "PID of the process to monitor")
+
+	return &monitorSessionArgumentsFlags{
+		FlagSet: cmd,
+		pid:     pid,
+	}
+}
+
+func (a *MonitorSessionArguments) Scan(args []string) error {
+	flags := a.Flags()
+	err := flags.Parse(args)
+	if err != nil {
+		return err
 	}
 
-	if pid == 0 {
+	if flags.pid == nil || *flags.pid == -1 {
 		return fmt.Errorf("pid is required")
 	}
 
-	a.PID = pid
+	a.PID = *flags.pid
 	return nil
 }

@@ -27,7 +27,7 @@ type Arguments struct {
 	Command                  Command
 	CreateSessionArguments   *CreateSessionArguments
 	ListSectionsArguments    *ListSessionsArguments
-	MonitorSessionsArguments *MonitorSessionsArguments
+	MonitorSessionsArguments *MonitorSessionArguments
 }
 
 func (a Arguments) IsPrivate() bool {
@@ -76,7 +76,7 @@ func ParseArguments() (Arguments, error) {
 	case CommandMonitorSession.String():
 		// TODO: make this private, it should only be executable
 		// TODO: from within this process.
-		monitorArgs := &MonitorSessionsArguments{}
+		monitorArgs := &MonitorSessionArguments{}
 		err = monitorArgs.Scan(args[1:])
 		if err == nil {
 			cmdArgs = Arguments{

@@ -185,7 +185,7 @@ func (s *sessionManager) ListSessions(args arguments.ListSessionsArguments) ([]s
 	return sessions, nil
 }
 
-func (s *sessionManager) MonitorSession(ctx context.Context, args arguments.MonitorSessionsArguments) error {
+func (s *sessionManager) MonitorSession(ctx context.Context, args arguments.MonitorSessionArguments) error {
 	// Start monitoring the session
 	return s.monitorProcessClosed(int32(args.PID), func() error {
 		session, err := s.GetSessionForPID(args.PID)

@@ -8,7 +8,7 @@ import (
 )
 
 type MonitorSessionCommand struct {
-	Arguments *arguments.MonitorSessionsArguments
+	Arguments *arguments.MonitorSessionArguments
 }
 
 func (c MonitorSessionCommand) Execute(ctx context.Context) error {
