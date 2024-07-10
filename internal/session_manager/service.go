@@ -14,6 +14,8 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/storage"
 	"github.com/shirou/gopsutil/v3/process"
+
+	"github.com/otiai10/copy"
 )
 
 type sessionManager struct {
@@ -33,8 +35,13 @@ func GetSessionManager() *sessionManager {
 	return mgr
 }
 
-func (s *sessionManager) CreateSession(args arguments.CreateSessionArguments) (session, error) {
+func (s *sessionManager) CreateSession(ctx context.Context, args arguments.CreateSessionArguments) (session, error) {
 	var zeroValue session
+
+	logger, err := logging.LoggerFromContext(ctx)
+	if err != nil {
+		return zeroValue, err
+	}
 
 	sessions, err := s.ListSessions(arguments.ListSessionsArguments{})
 	if err != nil {
@@ -63,21 +70,38 @@ func (s *sessionManager) CreateSession(args arguments.CreateSessionArguments) (s
 		return zeroValue, fmt.Errorf("failed to create temporary directory: %v", err)
 	}
 
+	if args.WithArgument != nil {
+		switch args.WithArgument.ArgumentType {
+		case arguments.WithArgumentTypeRepoPath:
+			break
+		case arguments.WithArgumentTypeDirectory:
+			dirPath := args.WithArgument.Value
+			if _, err := os.Stat(dirPath); err != nil {
+				return zeroValue, fmt.Errorf("directory %s does not exist", dirPath)
+			}
+
+			// Copy the directory to the temporary directory
+			err = copy.Copy(dirPath, tempDir)
+			if err != nil {
+				return zeroValue, fmt.Errorf("failed to copy directory: %v", err)
+			}
+		}
+	}
+
 	startTime := time.Now()
 
 	// Launch the editor
+	logger.Printf("launching editor %s\n", editor.String())
 	cfgArgs := strings.Split(editor.Args, " ")
 	cmdArgs := append(cfgArgs, tempDir)
 	cmd := exec.Command(editor.ExecPath, cmdArgs...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
 	err = cmd.Run()
 	if err != nil {
 		return zeroValue, fmt.Errorf("failed to run editor: %v", err)
 	}
 
 	// Give the process time to start
+	logger.Printf("waiting %v for editor process to start\n", editor.ProcessCaptureDelay)
 	time.Sleep(editor.ProcessCaptureDelay)
 
 	processes, err := process.Processes()
@@ -126,11 +150,13 @@ func (s *sessionManager) CreateSession(args arguments.CreateSessionArguments) (s
 
 	// Call this application again, but start it in the background as it's own process.
 	// This will allow the user to continue using the current terminal session.
+	logger.Printf("starting monitor process for session %s\n", newSession.FormattedName())
 	cmd = exec.Command(os.Args[0], "monitor", "-pid", fmt.Sprintf("%d", editorProcess.Pid))
 	err = cmd.Start()
 	if err != nil {
 		return zeroValue, fmt.Errorf("failed to start monitor process: %v", err)
 	}
+	logger.Printf("monitor process started with PID %v\n", cmd.Process.Pid)
 
 	return newSession, nil
 }

@@ -55,8 +55,6 @@ func New(cfg *LoggerConfig) (*logger, error) {
 	var file *os.File
 	var internalLogger *log.Logger
 
-	fmt.Printf("starting logger with mode: %s\n", cfg.LogMode.String())
-
 	if cfg == nil || cfg.LogMode == LogModeConsole {
 		// Write output to the console only.
 		internalLogger = log.New(os.Stdout, "letstry: ", log.LstdFlags)

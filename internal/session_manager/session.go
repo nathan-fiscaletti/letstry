@@ -1,6 +1,9 @@
 package session_manager
 
 import (
+	"fmt"
+
+	"github.com/fatih/color"
 	"github.com/nathan-fiscaletti/letstry/internal/arguments"
 	"github.com/nathan-fiscaletti/letstry/internal/config"
 	"github.com/shirou/gopsutil/v3/process"
@@ -32,4 +35,24 @@ func (s *session) Kill() {
 	}
 
 	proc.Kill()
+}
+
+func (s *session) String() string {
+	var src string
+	if s.Arguments.WithArgument != nil {
+		src = color.HiBlueString("[%s, %s]", s.Arguments.WithArgument.ArgumentType, s.Arguments.WithArgument.Value)
+	} else if s.Arguments.FromArgument != nil {
+		src = color.HiMagentaString("[template, %s]", s.Arguments.FromArgument.TemplateName)
+	} else {
+		src = color.HiRedString("unknown")
+	}
+
+	name := color.HiGreenString(s.Name)
+	editor := color.BlueString("(%s, PID %d)", s.Editor.Name, s.PID)
+
+	return fmt.Sprintf("name=%s, editor=%s, src=%s", name, editor, src)
+}
+
+func (s *session) FormattedName() string {
+	return color.HiGreenString(s.Name)
 }

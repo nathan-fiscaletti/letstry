@@ -1,0 +1,27 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - task: build:{{OS}}
+
+  build:darwin:
+    internal: true
+    cmds:
+      - cmd: echo "Building for darwin"
+        silent: true
+      - GOOS=darwin GOARCH=amd64 go build -o ./bin/letstry-darwin ./cmd/letstry
+
+  build:linux:
+    internal: true
+    cmds:
+      - cmd: echo "Building for linux"
+        silent: true
+      - GOOS=linux GOARCH=amd64 go build -o ./bin/letstry-linux ./cmd/letstry
+  
+  build:windows:
+    internal: true
+    cmds:
+      - cmd: echo "Building for windows"
+        silent: true
+      - GOOS=windows GOARCH=amd64 go build -o ./bin/letstry-windows.exe ./cmd/letstry

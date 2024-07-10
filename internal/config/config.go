@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"path/filepath"
 	"time"
+
+	"github.com/fatih/color"
 )
 
 type Editor struct {
@@ -15,6 +17,10 @@ type Editor struct {
 
 func (e Editor) GetExecName() string {
 	return filepath.Base(e.ExecPath)
+}
+
+func (e Editor) String() string {
+	return color.BlueString(fmt.Sprintf("(%s, %s)", e.Name, e.GetExecName()))
 }
 
 type Config struct {

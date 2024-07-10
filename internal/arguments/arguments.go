@@ -30,6 +30,16 @@ type Arguments struct {
 	MonitorSessionsArguments *MonitorSessionsArguments
 }
 
+func (a Arguments) IsPrivate() bool {
+	for _, cmd := range PrivateCommands() {
+		if a.Command == cmd {
+			return true
+		}
+	}
+
+	return false
+}
+
 // ParseArguments parses the command line arguments and returns an Arguments struct
 func ParseArguments() (Arguments, error) {
 	args := os.Args[1:]
