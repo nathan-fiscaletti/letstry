@@ -41,7 +41,11 @@ type CreateSessionArguments struct {
 }
 
 func (a *CreateSessionArguments) Name() string {
-	return CommandNewSession.String()
+	return CommandNameNewSession.String()
+}
+
+func (a *CreateSessionArguments) Aliases() []string {
+	return []string{}
 }
 
 func (a *CreateSessionArguments) FlagSet() *flag.FlagSet {

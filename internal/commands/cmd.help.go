@@ -10,11 +10,11 @@ import (
 )
 
 type HelpCommand struct {
-	Arguments *arguments.HelpArguments
+	Arguments arguments.Parameters
 }
 
 func (c HelpCommand) Execute(ctx context.Context) error {
-	publicCmds := arguments.GetPublicCommandArguments()
+	publicCmds := arguments.AllArguments.GetPublic()
 
 	var sb strings.Builder
 
@@ -26,7 +26,12 @@ func (c HelpCommand) Execute(ctx context.Context) error {
 
 	// Generate detailed help for each flag
 	for _, fs := range publicCmds {
-		sb.WriteString(fmt.Sprintf("letstry %s [options]\n\n", fs.Name()))
+		var name string = fs.Name()
+		if len(fs.Aliases()) > 0 {
+			name = fmt.Sprintf("[%s, %s]", fs.Name(), strings.Join(fs.Aliases(), ", "))
+		}
+
+		sb.WriteString(fmt.Sprintf("letstry %s [options]\n\n", name))
 
 		flagLen := 0
 		fs.FlagSet().VisitAll(func(f *flag.Flag) {

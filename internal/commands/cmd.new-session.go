@@ -9,7 +9,7 @@ import (
 )
 
 type NewSessionCommand struct {
-	Arguments *arguments.CreateSessionArguments
+	Arguments arguments.Parameters
 }
 
 func (c NewSessionCommand) Execute(ctx context.Context) error {
@@ -20,7 +20,8 @@ func (c NewSessionCommand) Execute(ctx context.Context) error {
 
 	manager := session_manager.GetSessionManager()
 
-	session, err := manager.CreateSession(ctx, *c.Arguments)
+	args := *c.Arguments.Arguments.(*arguments.CreateSessionArguments)
+	session, err := manager.CreateSession(ctx, args)
 	if err != nil {
 		return err
 	}

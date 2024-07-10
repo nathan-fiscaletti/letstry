@@ -7,8 +7,8 @@ func (c CommandName) String() string {
 }
 
 const (
-	CommandNewSession     CommandName = "new"
-	CommandListSessions   CommandName = "list"
-	CommandMonitorSession CommandName = "monitor"
-	CommandHelp           CommandName = "help"
+	CommandNameNewSession     CommandName = "new"
+	CommandNameListSessions   CommandName = "list"
+	CommandNameMonitorSession CommandName = "monitor"
+	CommandNameHelp           CommandName = "help"
 )

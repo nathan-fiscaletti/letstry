@@ -13,7 +13,11 @@ func (c *helpArgumentsFlags) Parse(args []string) error {
 type HelpArguments struct{}
 
 func (a *HelpArguments) Name() string {
-	return CommandHelp.String()
+	return CommandNameHelp.String()
+}
+
+func (a *HelpArguments) Aliases() []string {
+	return []string{"-h", "--help"}
 }
 
 func (a *HelpArguments) FlagSet() *flag.FlagSet {
@@ -21,7 +25,7 @@ func (a *HelpArguments) FlagSet() *flag.FlagSet {
 }
 
 func (a *HelpArguments) Flags() *helpArgumentsFlags {
-	cmd := flag.NewFlagSet(CommandHelp.String(), flag.ExitOnError)
+	cmd := flag.NewFlagSet(CommandNameHelp.String(), flag.ExitOnError)
 
 	return &helpArgumentsFlags{
 		FlagSet: cmd,

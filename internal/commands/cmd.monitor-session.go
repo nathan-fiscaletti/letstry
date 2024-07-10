@@ -8,10 +8,11 @@ import (
 )
 
 type MonitorSessionCommand struct {
-	Arguments *arguments.MonitorSessionArguments
+	Arguments arguments.Parameters
 }
 
 func (c MonitorSessionCommand) Execute(ctx context.Context) error {
 	manager := session_manager.GetSessionManager()
-	return manager.MonitorSession(ctx, *c.Arguments)
+	arguments := *c.Arguments.Arguments.(*arguments.MonitorSessionArguments)
+	return manager.MonitorSession(ctx, arguments)
 }

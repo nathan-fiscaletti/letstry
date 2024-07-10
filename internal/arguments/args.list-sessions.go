@@ -13,7 +13,11 @@ func (c *listSessionsArgumentsFlags) Parse(args []string) error {
 type ListSessionsArguments struct{}
 
 func (a *ListSessionsArguments) Name() string {
-	return CommandListSessions.String()
+	return CommandNameListSessions.String()
+}
+
+func (a *ListSessionsArguments) Aliases() []string {
+	return []string{}
 }
 
 func (a *ListSessionsArguments) FlagSet() *flag.FlagSet {
@@ -21,7 +25,7 @@ func (a *ListSessionsArguments) FlagSet() *flag.FlagSet {
 }
 
 func (a *ListSessionsArguments) Flags() *listSessionsArgumentsFlags {
-	cmd := flag.NewFlagSet(CommandListSessions.String(), flag.ExitOnError)
+	cmd := flag.NewFlagSet(CommandNameListSessions.String(), flag.ExitOnError)
 
 	return &listSessionsArgumentsFlags{
 		FlagSet: cmd,

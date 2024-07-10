@@ -12,8 +12,9 @@ import (
 )
 
 type application struct {
-	context   context.Context
-	arguments arguments.ParsedArguments
+	context    context.Context
+	parameters arguments.Parameters
+	commands   arguments.ArgumentsList
 }
 
 // NewApplication creates a new application instance
@@ -26,8 +27,12 @@ func NewApplication(ctx context.Context) *application {
 		panic(err)
 	}
 
+	app := &application{
+		commands: arguments.AllArguments,
+	}
+
 	// Parse the command line arguments.
-	args, err := arguments.ParseArguments()
+	args, err := arguments.ParseArguments(app.commands)
 	if err != nil {
 		logger.Printf("Error: %s\n", err.Error())
 		os.Exit(1)
@@ -51,10 +56,10 @@ func NewApplication(ctx context.Context) *application {
 	// Update the context with the logger.
 	ctx = logging.ContextWithLogger(ctx, logger)
 
-	return &application{
-		arguments: args,
-		context:   ctx,
-	}
+	app.context = ctx
+	app.parameters = args
+
+	return app
 }
 
 // Start starts the application
@@ -71,16 +76,16 @@ func (a *application) Start() {
 		}
 	}()
 
-	// Retrieve the corresponding command structure based on
+	// Retrieve the corresponding command executor based on
 	// the command line arguments.
-	cmd, err := commands.GetCommand(a.GetContext(), a.GetArguments())
+	executor, err := commands.GetCommandExecutor(a.GetContext(), a.GetParsedArguments())
 	if err != nil {
 		logger.Printf("Error: %s\n", color.RedString(err.Error()))
 		os.Exit(1)
 	}
 
 	// Execute the command.
-	err = cmd.Execute(a.GetContext())
+	err = executor.Execute(a.GetContext())
 	if err != nil {
 		logger.Printf("Error: %s\n", color.RedString(err.Error()))
 		os.Exit(1)
@@ -89,9 +94,9 @@ func (a *application) Start() {
 	os.Exit(0)
 }
 
-// GetArguments returns the application arguments
-func (a *application) GetArguments() arguments.ParsedArguments {
-	return a.arguments
+// GetParsedArguments returns the parsed application arguments
+func (a *application) GetParsedArguments() arguments.Parameters {
+	return a.parameters
 }
 
 // GetContext returns the application context

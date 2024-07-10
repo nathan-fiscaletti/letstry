@@ -20,7 +20,15 @@ type MonitorSessionArguments struct {
 }
 
 func (a *MonitorSessionArguments) Name() string {
-	return CommandMonitorSession.String()
+	return CommandNameMonitorSession.String()
+}
+
+func (a *MonitorSessionArguments) IsPrivate() bool {
+	return true
+}
+
+func (a *MonitorSessionArguments) Aliases() []string {
+	return []string{}
 }
 
 func (a *MonitorSessionArguments) FlagSet() *flag.FlagSet {
@@ -30,7 +38,7 @@ func (a *MonitorSessionArguments) FlagSet() *flag.FlagSet {
 func (a *MonitorSessionArguments) Flags() *monitorSessionArgumentsFlags {
 	var pid *int
 
-	cmd := flag.NewFlagSet(CommandMonitorSession.String(), flag.ExitOnError)
+	cmd := flag.NewFlagSet(CommandNameMonitorSession.String(), flag.ExitOnError)
 
 	pid = cmd.Int("pid", -1, "PID of the process to monitor")
 

@@ -7,29 +7,29 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/arguments"
 )
 
-type Command interface {
+type CommandExecutor interface {
 	Execute(ctx context.Context) error
 }
 
-func GetCommand(ctx context.Context, args arguments.ParsedArguments) (Command, error) {
-	var cmd Command
+func GetCommandExecutor(ctx context.Context, args arguments.Parameters) (CommandExecutor, error) {
+	var cmd CommandExecutor
 
-	switch args.Command {
-	case arguments.CommandNewSession:
+	switch arguments.CommandName(args.Arguments.Name()) {
+	case arguments.CommandNameNewSession:
 		cmd = NewSessionCommand{
-			Arguments: args.CreateSessionArguments,
+			Arguments: args,
 		}
-	case arguments.CommandListSessions:
+	case arguments.CommandNameListSessions:
 		cmd = ListSessionsCommand{
-			Arguments: args.ListSectionsArguments,
+			Arguments: args,
 		}
-	case arguments.CommandMonitorSession:
+	case arguments.CommandNameMonitorSession:
 		cmd = MonitorSessionCommand{
-			Arguments: args.MonitorSessionsArguments,
+			Arguments: args,
 		}
-	case arguments.CommandHelp:
+	case arguments.CommandNameHelp:
 		cmd = HelpCommand{
-			Arguments: args.HelpArguments,
+			Arguments: args,
 		}
 	}
 

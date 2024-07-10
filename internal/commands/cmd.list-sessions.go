@@ -11,7 +11,7 @@ import (
 )
 
 type ListSessionsCommand struct {
-	Arguments *arguments.ListSessionsArguments
+	Arguments arguments.Parameters
 }
 
 func (c ListSessionsCommand) Execute(ctx context.Context) error {
@@ -21,8 +21,8 @@ func (c ListSessionsCommand) Execute(ctx context.Context) error {
 	}
 
 	manager := session_manager.GetSessionManager()
-
-	sessions, err := manager.ListSessions(*c.Arguments)
+	args := *c.Arguments.Arguments.(*arguments.ListSessionsArguments)
+	sessions, err := manager.ListSessions(args)
 	if err != nil {
 		return err
 	}
