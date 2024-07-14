@@ -247,9 +247,19 @@ func (s *sessionManager) removeSession(name string) error {
 				return fmt.Errorf("failed to marshal sessions: %v", err)
 			}
 
+			err = file.Truncate(0)
+			if err != nil {
+				return fmt.Errorf("failed to truncate sessions file: %v", err)
+			}
+
 			_, err = file.Write(data)
 			if err != nil {
 				return fmt.Errorf("failed to write sessions: %v", err)
+			}
+
+			err = file.Sync()
+			if err != nil {
+				return fmt.Errorf("failed to sync sessions file: %v", err)
 			}
 
 			// Give the process manager time to settle
@@ -296,9 +306,19 @@ func (s *sessionManager) addSession(sess session) error {
 		return fmt.Errorf("failed to marshal sessions: %v", err)
 	}
 
+	err = file.Truncate(0)
+	if err != nil {
+		return fmt.Errorf("failed to truncate sessions: %v", err)
+	}
+
 	_, err = file.Write(data)
 	if err != nil {
 		return fmt.Errorf("failed to write sessions: %v", err)
+	}
+
+	err = file.Sync()
+	if err != nil {
+		return fmt.Errorf("failed to sync sessions file: %v", err)
 	}
 
 	return nil
