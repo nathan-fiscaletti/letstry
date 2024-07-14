@@ -11,4 +11,5 @@ const (
 	CommandNameListSessions   CommandName = "list"
 	CommandNameMonitorSession CommandName = "monitor"
 	CommandNameHelp           CommandName = "help"
+	CommandNameSaveSession    CommandName = "save"
 )

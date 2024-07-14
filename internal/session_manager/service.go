@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/go-git/go-git/v5"
 	"github.com/nathan-fiscaletti/letstry/internal/arguments"
 	"github.com/nathan-fiscaletti/letstry/internal/config"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
@@ -43,7 +44,7 @@ func (s *sessionManager) CreateSession(ctx context.Context, args arguments.Creat
 		return zeroValue, err
 	}
 
-	sessions, err := s.ListSessions(arguments.ListSessionsArguments{})
+	sessions, err := s.ListSessions(ctx, arguments.ListSessionsArguments{})
 	if err != nil {
 		return zeroValue, err
 	}
@@ -70,10 +71,21 @@ func (s *sessionManager) CreateSession(ctx context.Context, args arguments.Creat
 		return zeroValue, fmt.Errorf("failed to create temporary directory: %v", err)
 	}
 
+	// Handle "With" arguments
 	if args.WithArgument != nil {
 		switch args.WithArgument.ArgumentType {
+
+		// Handle git repository.
 		case arguments.WithArgumentTypeRepoPath:
-			break
+			logger.Printf("cloning repository %s\n", args.WithArgument.Value)
+			_, err := git.PlainClone(tempDir, false, &git.CloneOptions{
+				URL: args.WithArgument.Value,
+			})
+			if err != nil {
+				return zeroValue, fmt.Errorf("failed to clone repository: %v", err)
+			}
+
+		// Handle directory.
 		case arguments.WithArgumentTypeDirectory:
 			dirPath := args.WithArgument.Value
 			if _, err := os.Stat(dirPath); err != nil {
@@ -86,6 +98,7 @@ func (s *sessionManager) CreateSession(ctx context.Context, args arguments.Creat
 				return zeroValue, fmt.Errorf("failed to copy directory: %v", err)
 			}
 		}
+
 	}
 
 	startTime := time.Now()
@@ -143,7 +156,7 @@ func (s *sessionManager) CreateSession(ctx context.Context, args arguments.Creat
 	}
 
 	// Save the session
-	err = s.addSession(newSession)
+	err = s.addSession(ctx, newSession)
 	if err != nil {
 		return zeroValue, err
 	}
@@ -161,7 +174,7 @@ func (s *sessionManager) CreateSession(ctx context.Context, args arguments.Creat
 	return newSession, nil
 }
 
-func (s *sessionManager) ListSessions(args arguments.ListSessionsArguments) ([]session, error) {
+func (s *sessionManager) ListSessions(ctx context.Context, args arguments.ListSessionsArguments) ([]session, error) {
 	var sessions []session = make([]session, 0)
 
 	var defaultSessions []byte
@@ -187,8 +200,8 @@ func (s *sessionManager) ListSessions(args arguments.ListSessionsArguments) ([]s
 
 func (s *sessionManager) MonitorSession(ctx context.Context, args arguments.MonitorSessionArguments) error {
 	// Start monitoring the session
-	return s.monitorProcessClosed(int32(args.PID), func() error {
-		session, err := s.GetSessionForPID(args.PID)
+	return s.monitorProcessClosed(ctx, int32(args.PID), func() error {
+		session, err := s.GetSessionForPID(ctx, args.PID)
 		if err != nil {
 			return err
 		}
@@ -200,7 +213,7 @@ func (s *sessionManager) MonitorSession(ctx context.Context, args arguments.Moni
 
 		logger.Printf("cleaning up session: %s (process closed, PID %d)\n", session.Name, session.PID)
 
-		err = s.removeSession(session.Name)
+		err = s.removeSession(ctx, session.Name)
 		if err != nil {
 			return err
 		}
@@ -209,9 +222,9 @@ func (s *sessionManager) MonitorSession(ctx context.Context, args arguments.Moni
 	})
 }
 
-// GetSessionForPID returns the session for the given PID
-func (s *sessionManager) GetSessionForPID(pid int) (session, error) {
-	sessions, err := s.ListSessions(arguments.ListSessionsArguments{})
+// GetSessionForPID returns the session with the given PID
+func (s *sessionManager) GetSessionForPID(ctx context.Context, pid int) (session, error) {
+	sessions, err := s.ListSessions(ctx, arguments.ListSessionsArguments{})
 	if err != nil {
 		return session{}, err
 	}
@@ -225,8 +238,25 @@ func (s *sessionManager) GetSessionForPID(pid int) (session, error) {
 	return session{}, fmt.Errorf("session with PID %d not found", pid)
 }
 
-func (s *sessionManager) removeSession(name string) error {
-	sessions, err := s.ListSessions(arguments.ListSessionsArguments{})
+// GetSession returns the session with the given name
+func (s *sessionManager) GetSession(ctx context.Context, name string) (session, error) {
+	sessions, err := s.ListSessions(ctx, arguments.ListSessionsArguments{})
+	if err != nil {
+		return session{}, err
+	}
+
+	for _, session := range sessions {
+		if session.Name == name {
+			return session, nil
+		}
+	}
+
+	return session{}, fmt.Errorf("session with name %s not found", name)
+
+}
+
+func (s *sessionManager) removeSession(ctx context.Context, name string) error {
+	sessions, err := s.ListSessions(ctx, arguments.ListSessionsArguments{})
 	if err != nil {
 		return err
 	}
@@ -278,8 +308,8 @@ func (s *sessionManager) removeSession(name string) error {
 	return fmt.Errorf("session with name %s not found", name)
 }
 
-func (s *sessionManager) addSession(sess session) error {
-	sessions, err := s.ListSessions(arguments.ListSessionsArguments{})
+func (s *sessionManager) addSession(ctx context.Context, sess session) error {
+	sessions, err := s.ListSessions(ctx, arguments.ListSessionsArguments{})
 	if err != nil {
 		return err
 	}
@@ -324,7 +354,7 @@ func (s *sessionManager) addSession(sess session) error {
 	return nil
 }
 
-func (s *sessionManager) monitorProcessClosed(pid int32, callback func() error) error {
+func (s *sessionManager) monitorProcessClosed(ctx context.Context, pid int32, callback func() error) error {
 	p, err := process.NewProcess(pid)
 	if err != nil {
 		return err

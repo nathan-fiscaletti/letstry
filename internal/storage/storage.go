@@ -33,6 +33,10 @@ func GetStorage() *Storage {
 	return storage
 }
 
+func (s *Storage) GetPath(value string) string {
+	return filepath.Join(s.dir, value)
+}
+
 func (s *Storage) OpenFile(name string) (*os.File, error) {
 	return s.OpenFileWithDefaultContent(name, []byte{})
 }
@@ -65,4 +69,42 @@ func (s *Storage) OpenFileWithDefaultContent(name string, defaultContent []byte)
 	}
 
 	return os.OpenFile(filePath, os.O_RDWR, 0644)
+}
+
+func (s *Storage) DirectoryExists(name string) bool {
+	_, err := os.Stat(filepath.Join(s.dir, name))
+	return !os.IsNotExist(err)
+}
+
+func (s *Storage) CreateDirectory(name string) error {
+	return os.MkdirAll(filepath.Join(s.dir, name), 0755)
+}
+
+func (s *Storage) DeleteDirectory(name string) error {
+	return os.RemoveAll(filepath.Join(s.dir, name))
+}
+
+func (s *Storage) ListDirectories(path string) ([]string, error) {
+	// List all directories within the directory specified by the path
+
+	dir, err := os.Open(filepath.Join(s.dir, path))
+	if err != nil {
+		return []string{}, err
+	}
+
+	defer dir.Close()
+
+	files, err := dir.Readdir(-1)
+	if err != nil {
+		return []string{}, err
+	}
+
+	var dirs []string
+	for _, file := range files {
+		if file.IsDir() {
+			dirs = append(dirs, file.Name())
+		}
+	}
+
+	return dirs, nil
 }

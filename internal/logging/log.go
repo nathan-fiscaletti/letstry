@@ -40,6 +40,11 @@ type logger struct {
 	cfg LoggerConfig
 }
 
+func (l *logger) Write(p []byte) (n int, err error) {
+	l.Logger.Print(string(p))
+	return len(p), nil
+}
+
 func (l *logger) File() *os.File {
 	if file, ok := l.Writer().(*os.File); ok {
 		return file

@@ -27,6 +27,10 @@ func GetCommandExecutor(ctx context.Context, args arguments.Parameters) (Command
 		cmd = MonitorSessionCommand{
 			Arguments: args,
 		}
+	case arguments.CommandNameSaveSession:
+		cmd = SaveSessionCommand{
+			Arguments: args,
+		}
 	case arguments.CommandNameHelp:
 		cmd = HelpCommand{
 			Arguments: args,

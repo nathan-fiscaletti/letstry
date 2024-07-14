@@ -22,7 +22,7 @@ func (c ListSessionsCommand) Execute(ctx context.Context) error {
 
 	manager := session_manager.GetSessionManager()
 	args := *c.Arguments.Arguments.(*arguments.ListSessionsArguments)
-	sessions, err := manager.ListSessions(args)
+	sessions, err := manager.ListSessions(ctx, args)
 	if err != nil {
 		return err
 	}
