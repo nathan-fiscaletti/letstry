@@ -12,4 +12,5 @@ const (
 	CommandNameMonitorSession CommandName = "monitor"
 	CommandNameHelp           CommandName = "help"
 	CommandNameSaveSession    CommandName = "save"
+	CommandNameListTemplates  CommandName = "list-templates"
 )

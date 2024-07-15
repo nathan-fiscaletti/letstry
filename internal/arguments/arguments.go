@@ -12,6 +12,7 @@ var AllArguments = ArgumentsList{
 	&ListSessionsArguments{},
 	&MonitorSessionArguments{},
 	&SaveSessionArguments{},
+	&ListTemplatesArguments{},
 	&HelpArguments{},
 }
 

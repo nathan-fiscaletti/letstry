@@ -67,7 +67,7 @@ func (s *sessionManager) SaveTemplate(ctx context.Context, arg arguments.SaveSes
 		return "", err
 	}
 
-	return template(templatePath), nil
+	return template(arg.TemplateName), nil
 }
 
 func (s *sessionManager) ListTemplates(ctx context.Context) ([]template, error) {
@@ -84,8 +84,17 @@ func (s *sessionManager) ListTemplates(ctx context.Context) ([]template, error) 
 	return result, nil
 }
 
+func (s *sessionManager) GetTemplate(ctx context.Context, name string) (template, error) {
+	if !s.storage.DirectoryExists(filepath.Join("templates", name)) {
+		return "", fmt.Errorf("template with name %s does not exist", name)
+	}
+
+	return template(name), nil
+
+}
+
 func (s *sessionManager) DeleteTemplate(ctx context.Context, t template) error {
-	return s.storage.DeleteDirectory(t.String())
+	return s.storage.DeleteDirectory(filepath.Join("templates", t.String()))
 }
 
 func (s *sessionManager) createTemplatesDirectoryIfNotExists() error {

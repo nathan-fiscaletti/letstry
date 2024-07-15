@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -129,6 +130,22 @@ func (s *sessionManager) CreateSession(ctx context.Context, args arguments.Creat
 			}
 		}
 
+	}
+
+	// Handle "From" arguments
+	if args.FromArgument != nil {
+		// Check if the specified template exists.
+		template, err := s.GetTemplate(ctx, args.FromArgument.TemplateName)
+		if err != nil {
+			return zeroValue, err
+		}
+
+		// Copy the template to the temporary directory
+		templatePath := s.storage.GetPath(filepath.Join("templates", template.String()))
+		err = copy.Copy(templatePath, tempDir)
+		if err != nil {
+			return zeroValue, fmt.Errorf("failed to load template %s: %s", args.FromArgument.TemplateName, err)
+		}
 	}
 
 	startTime := time.Now()
