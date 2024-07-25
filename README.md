@@ -20,6 +20,13 @@ To install letstry, run the following command:
 $ go install github.com/nathan-fiscaletti/letstry/cmd/letstry@latest
 ```
 
+Alternately, you can install it by cloning the repository and building from source:
+
+```sh
+$ git clone git@github.com:nathan-fiscaletti/letstry.git
+$ go install ./...
+```
+
 ## Usage
 
 ### Project Creation
