@@ -11,6 +11,28 @@ var (
 	ErrMissingTemplateName = errors.New("missing template name")
 )
 
+func DeleteTemplateHelp() string {
+	cmdName := GetCallerName()
+
+	return `
+` + cmdName + `: delete-template -- Delete a template
+
+Usage: 
+
+    ` + cmdName + ` delete-template <name>
+
+Description:
+
+    Delete a template by name.
+
+Arguments:
+
+	name - The name of the template to delete.
+
+Run '` + cmdName + ` help' for information on additional commands.
+`
+}
+
 func DeleteTemplate(ctx context.Context, args []string) error {
 	if len(args) < 1 {
 		return ErrMissingTemplateName

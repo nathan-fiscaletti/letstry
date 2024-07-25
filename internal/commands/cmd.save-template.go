@@ -6,6 +6,32 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
 )
 
+func SaveTemplateHelp() string {
+	cmdName := GetCallerName()
+
+	return `
+` + cmdName + `: save -- Saves the current session as a template
+
+Usage: 
+
+    ` + cmdName + ` save [template-name]
+
+Description:
+
+    This command must be run from within a session. It will save the current
+    session as a template with the specified name. If no name is provided, and
+    the session was created from a template, the template's name will be used.
+
+Arguments:
+
+    template-name (optional) - The name to use for the template. If not provided,
+                               and the session was created from a template, the
+                               template's name will be used.
+
+Run '` + cmdName + ` help' for information on additional commands.
+`
+}
+
 func SaveTemplate(ctx context.Context, args []string) error {
 	var templateName string
 

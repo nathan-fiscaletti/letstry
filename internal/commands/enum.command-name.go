@@ -16,18 +16,20 @@ func (c CommandName) String() string {
 }
 
 const (
+	CommandHelp           CommandName = "help"
+	CommandMonitor        CommandName = "monitor"
 	CommandNewSession     CommandName = "new"
 	CommandListSessions   CommandName = "list"
-	CommandMonitor        CommandName = "monitor"
 	CommandListTemplates  CommandName = "templates"
 	CommandDeleteTemplate CommandName = "delete-template"
 	CommandSaveTemplate   CommandName = "save"
 )
 
 var allCommands = []CommandName{
+	CommandHelp,
+	CommandMonitor,
 	CommandNewSession,
 	CommandListSessions,
-	CommandMonitor,
 	CommandListTemplates,
 	CommandDeleteTemplate,
 	CommandSaveTemplate,

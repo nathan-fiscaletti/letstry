@@ -7,6 +7,24 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
 )
 
+func ListSessionsHelp() string {
+	cmdName := GetCallerName()
+
+	return `
+` + cmdName + `: list -- List running sessions
+
+Usage: 
+
+    ` + cmdName + ` list
+
+Description:
+
+    Lists running sessions.
+
+Run '` + cmdName + ` help' for information on additional commands.
+`
+}
+
 func ListSessions(ctx context.Context, args []string) error {
 	manager, err := session_manager.GetSessionManager(ctx)
 	if err != nil {

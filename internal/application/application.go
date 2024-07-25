@@ -15,14 +15,15 @@ var (
 	ErrNoCommandProvided = errors.New("no command provided")
 )
 
-type application struct {
+type Application struct {
 	context         context.Context
 	commands        map[commands.CommandName]commands.Command
+	helpMessages    map[commands.CommandName]string
 	privateCommands []commands.CommandName
 }
 
 // NewApplication creates a new application instance
-func NewApplication(ctx context.Context) *application {
+func NewApplication(ctx context.Context) *Application {
 	// Initialize base line logging, writing to the console.
 	logger, err := logging.New(&logging.LoggerConfig{
 		LogMode: logging.LogModeConsole,
@@ -35,7 +36,7 @@ func NewApplication(ctx context.Context) *application {
 	ctx = logging.ContextWithLogger(ctx, logger)
 
 	// Initialize the application.
-	app := &application{context: ctx}
+	app := &Application{context: ctx}
 
 	// Register commands
 	app.registerCommands()
@@ -44,7 +45,7 @@ func NewApplication(ctx context.Context) *application {
 }
 
 // Start starts the application
-func (a *application) Start() {
+func (a *Application) Start() {
 	logger, err := logging.LoggerFromContext(a.GetContext())
 	if err != nil {
 		panic(err)
@@ -88,6 +89,6 @@ func (a *application) Start() {
 }
 
 // GetContext returns the application context
-func (a *application) GetContext() context.Context {
+func (a *Application) GetContext() context.Context {
 	return a.context
 }

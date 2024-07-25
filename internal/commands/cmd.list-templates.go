@@ -7,6 +7,24 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
 )
 
+func ListTemplatesHelp() string {
+	cmdName := GetCallerName()
+
+	return `
+` + cmdName + `: templates -- List templates
+
+Usage: 
+
+    ` + cmdName + ` templates
+
+Description:
+
+    Lists available templates.
+
+Run '` + cmdName + ` help' for information on additional commands.
+`
+}
+
 func ListTemplates(ctx context.Context, args []string) error {
 	manager, err := session_manager.GetSessionManager(ctx)
 	if err != nil {
