@@ -14,21 +14,11 @@ letstry is a powerful tool designed to streamline project creation and managemen
 
 ## Installation
 
-To install letstry, follow these steps:
+To install letstry, run the following command:
 
-1. Clone the repository:
-    ```sh
-    git clone https://github.com/yourusername/letstry.git
-    ```
-2. Navigate to the project directory:
-    ```sh
-    cd letstry
-    ```
-3. Build the project:
-    ```sh
-    go build
-    ```
-4. Move the binary to your desired location and ensure it's in your PATH.
+```sh
+$ go install github.com/nathan-fiscaletti/letstry/cmd/letstry@latest
+```
 
 ## Usage
 
