@@ -141,22 +141,28 @@ type ParsedCommand struct {
 
 func (a *Application) parseCommand() (*ParsedCommand, error) {
 	// Get argv
-	args := os.Args[1:]
+	args := os.Args
 
-	if len(args) < 1 {
-		return nil, ErrNoCommandProvided
+	var err error
+	var commandName commands.CommandName
+	var command commands.Command
+
+	if len(args) >= 2 {
+		args = args[1:]
+		commandName, err = commands.GetCommandName(args[0])
+		if err != nil {
+			return nil, err
+		}
+
+		if !a.IsCommand(commandName) {
+			return nil, commands.ErrUnknownCommand
+		}
+
+		command = a.commands[commandName]
+	} else {
+		args = []string{"help"}
+		command = a.commands[commands.CommandHelp]
 	}
-
-	commandName, err := commands.GetCommandName(args[0])
-	if err != nil {
-		return nil, err
-	}
-
-	if !a.IsCommand(commandName) {
-		return nil, commands.ErrUnknownCommand
-	}
-
-	command := a.commands[commandName]
 
 	return &ParsedCommand{
 		Name:      commandName,
