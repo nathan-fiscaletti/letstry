@@ -3,39 +3,33 @@ package commands
 import (
 	"context"
 
-	"github.com/fatih/color"
-
-	"github.com/nathan-fiscaletti/letstry/internal/arguments"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
 )
 
-type ListTemplatesCommand struct {
-	Arguments arguments.Parameters
-}
-
-func (c ListTemplatesCommand) Execute(ctx context.Context) error {
-	logger, err := logging.LoggerFromContext(ctx)
+func ListTemplates(ctx context.Context, args []string) error {
+	manager, err := session_manager.GetSessionManager(ctx)
 	if err != nil {
 		return err
 	}
-
-	manager := session_manager.GetSessionManager()
 
 	templates, err := manager.ListTemplates(ctx)
 	if err != nil {
 		return err
 	}
 
-	logger.Printf("Templates:\n")
+	logger, err := logging.LoggerFromContext(ctx)
+	if err != nil {
+		return err
+	}
 
-	if len(templates) == 0 {
-		logger.Printf(color.RedString("No templates found"))
+	if len(templates) < 1 {
+		logger.Println("no templates found")
 		return nil
 	}
 
-	for idx, template := range templates {
-		logger.Printf("%d: %s\n", idx+1, template.String())
+	for _, template := range templates {
+		logger.Printf("template: %s\n", template.FormattedString(ctx))
 	}
 
 	return nil

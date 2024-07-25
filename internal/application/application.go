@@ -2,19 +2,23 @@ package application
 
 import (
 	"context"
+	"errors"
 	"os"
 
 	"github.com/fatih/color"
 
-	"github.com/nathan-fiscaletti/letstry/internal/arguments"
 	"github.com/nathan-fiscaletti/letstry/internal/commands"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 )
 
+var (
+	ErrNoCommandProvided = errors.New("no command provided")
+)
+
 type application struct {
-	context    context.Context
-	parameters arguments.Parameters
-	commands   arguments.ArgumentsList
+	context         context.Context
+	commands        map[commands.CommandName]commands.Command
+	privateCommands []commands.CommandName
 }
 
 // NewApplication creates a new application instance
@@ -27,37 +31,14 @@ func NewApplication(ctx context.Context) *application {
 		panic(err)
 	}
 
-	app := &application{
-		commands: arguments.AllArguments,
-	}
-
-	// Parse the command line arguments.
-	args, err := arguments.ParseArguments(app.commands)
-	if err != nil {
-		logger.Printf("Error: %s\n", err.Error())
-		os.Exit(1)
-	}
-
-	// Update the logging based on the command passed.
-	// If it is a private command, write to a file only.
-	if args.IsPrivate() {
-		if logFile := logger.File(); logFile != nil {
-			logFile.Close()
-		}
-
-		logger, err = logging.New(&logging.LoggerConfig{
-			LogMode: logging.LogModeFile,
-		})
-		if err != nil {
-			panic(err)
-		}
-	}
-
-	// Update the context with the logger.
+	// Initialize logging
 	ctx = logging.ContextWithLogger(ctx, logger)
 
-	app.context = ctx
-	app.parameters = args
+	// Initialize the application.
+	app := &application{context: ctx}
+
+	// Register commands
+	app.registerCommands()
 
 	return app
 }
@@ -69,6 +50,26 @@ func (a *application) Start() {
 		panic(err)
 	}
 
+	// Parse the command line
+	cmd, err := a.parseCommand()
+	if err != nil {
+		logger.Printf("Error: %s\n", color.RedString(err.Error()))
+		os.Exit(1)
+	}
+
+	// Update the logging based on the command passed.
+	// If it is a private command, write to a file only.
+	if cmd.IsPrivate {
+		logger, err = logging.New(&logging.LoggerConfig{
+			LogMode: logging.LogModeFile,
+		})
+		if err != nil {
+			panic(err)
+		}
+
+		a.context = logging.ContextWithLogger(a.GetContext(), logger)
+	}
+
 	// Close the logger when the application closes.
 	defer func() {
 		if logFile := logger.File(); logFile != nil {
@@ -76,27 +77,14 @@ func (a *application) Start() {
 		}
 	}()
 
-	// Retrieve the corresponding command executor based on
-	// the command line arguments.
-	executor, err := commands.GetCommandExecutor(a.GetContext(), a.GetParsedArguments())
-	if err != nil {
-		logger.Printf("Error: %s\n", color.RedString(err.Error()))
-		os.Exit(1)
-	}
-
-	// Execute the command.
-	err = executor.Execute(a.GetContext())
+	// Run the command
+	err = cmd.Execute(a.GetContext(), cmd.Arguments)
 	if err != nil {
 		logger.Printf("Error: %s\n", color.RedString(err.Error()))
 		os.Exit(1)
 	}
 
 	os.Exit(0)
-}
-
-// GetParsedArguments returns the parsed application arguments
-func (a *application) GetParsedArguments() arguments.Parameters {
-	return a.parameters
 }
 
 // GetContext returns the application context

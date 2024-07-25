@@ -33,7 +33,7 @@ func GetStorage() *Storage {
 	return storage
 }
 
-func (s *Storage) GetPath(value string) string {
+func (s *Storage) GetAbsolutePath(value string) string {
 	return filepath.Join(s.dir, value)
 }
 
@@ -72,8 +72,12 @@ func (s *Storage) OpenFileWithDefaultContent(name string, defaultContent []byte)
 }
 
 func (s *Storage) DirectoryExists(name string) bool {
-	_, err := os.Stat(filepath.Join(s.dir, name))
-	return !os.IsNotExist(err)
+	stat, err := os.Stat(filepath.Join(s.dir, name))
+	if err != nil {
+		return false
+	}
+
+	return stat.IsDir()
 }
 
 func (s *Storage) CreateDirectory(name string) error {

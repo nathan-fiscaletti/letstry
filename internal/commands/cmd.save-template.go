@@ -6,11 +6,11 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
 )
 
-func NewSession(ctx context.Context, args []string) error {
-	var source string
+func SaveTemplate(ctx context.Context, args []string) error {
+	var templateName string
 
 	if len(args) >= 1 {
-		source = args[0]
+		templateName = args[0]
 	}
 
 	manager, err := session_manager.GetSessionManager(ctx)
@@ -18,9 +18,10 @@ func NewSession(ctx context.Context, args []string) error {
 		return err
 	}
 
-	_, err = manager.CreateSession(ctx, session_manager.CreateSessionArguments{
-		Source: source,
+	_, err = manager.SaveSessionAsTemplate(ctx, session_manager.SaveSessionAsTemplateArguments{
+		TemplateName: templateName,
 	})
+
 	if err != nil {
 		return err
 	}

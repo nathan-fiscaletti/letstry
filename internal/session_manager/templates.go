@@ -3,98 +3,56 @@ package session_manager
 import (
 	"context"
 	"fmt"
+	"os"
 	"path/filepath"
 
-	"github.com/nathan-fiscaletti/letstry/internal/arguments"
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
-	"github.com/otiai10/copy"
+	"github.com/fatih/color"
 )
 
-type template string
+type Template string
 
-func (t template) String() string {
+func (t Template) String() string {
 	return string(t)
 }
 
-func (s *sessionManager) SaveTemplate(ctx context.Context, arg arguments.SaveSessionArguments) (template, error) {
-	logger, err := logging.LoggerFromContext(ctx)
+func (t Template) FormattedString(ctx context.Context) string {
+	name := color.YellowString(t.String())
+
+	var updated string
+
+	absolutePath := t.AbsolutePath(ctx)
+	// Get the last updated date for the directory
+	stat, err := os.Stat(absolutePath)
 	if err != nil {
-		return "", err
+		updated = color.RedString("unknown")
+	} else {
+		updated = color.BlueString("(%s)", stat.ModTime().Format("2006-01-02 15:04:05"))
 	}
 
-	sessions, err := s.ListSessions(ctx, arguments.ListSessionsArguments{})
-	if err != nil {
-		return "", err
-	}
-
-	var sess *session
-	for _, session := range sessions {
-		if session.Arguments.SessionName == arg.SessionName {
-			sess = &session
-			break
-		}
-	}
-
-	if sess == nil {
-		return "", fmt.Errorf("session with name %s does not exist", arg.SessionName)
-	}
-
-	logger.Printf("found session %s\n", sess.Name)
-
-	err = s.createTemplatesDirectoryIfNotExists()
-	if err != nil {
-		return "", err
-	}
-
-	templatePath := filepath.Join("templates", arg.TemplateName)
-
-	logger.Printf("storing template in %s\n", templatePath)
-
-	if s.storage.DirectoryExists(templatePath) {
-		return "", fmt.Errorf("template with name %s already exists", arg.TemplateName)
-	}
-
-	err = s.storage.CreateDirectory(templatePath)
-	if err != nil {
-		return "", err
-	}
-
-	// Copy the session contents to the template directory
-	logger.Printf("copying %s to %s\n", sess.Location, s.storage.GetPath(templatePath))
-
-	err = copy.Copy(sess.Location, s.storage.GetPath(templatePath))
-	if err != nil {
-		return "", err
-	}
-
-	return template(arg.TemplateName), nil
+	return fmt.Sprintf("name=%s, updated=%s", name, updated)
 }
 
-func (s *sessionManager) ListTemplates(ctx context.Context) ([]template, error) {
-	templates, err := s.storage.ListDirectories("templates")
+func (t Template) AbsolutePath(ctx context.Context) string {
+	sessionMgr, err := GetSessionManager(ctx)
 	if err != nil {
-		return nil, err
+		panic(err)
 	}
 
-	var result []template
-	for _, t := range templates {
-		result = append(result, template(t))
-	}
-
-	return result, nil
+	return sessionMgr.storage.GetAbsolutePath(t.StoragePath())
 }
 
-func (s *sessionManager) GetTemplate(ctx context.Context, name string) (template, error) {
-	if !s.storage.DirectoryExists(filepath.Join("templates", name)) {
+func (t Template) StoragePath() string {
+	return filepath.Join("templates", t.String())
+}
+
+func (s *sessionManager) GetTemplate(ctx context.Context, name string) (Template, error) {
+	template := Template(name)
+
+	if !s.storage.DirectoryExists(template.StoragePath()) {
 		return "", fmt.Errorf("template with name %s does not exist", name)
 	}
 
-	return template(name), nil
-
-}
-
-func (s *sessionManager) DeleteTemplate(ctx context.Context, t template) error {
-	return s.storage.DeleteDirectory(filepath.Join("templates", t.String()))
+	return template, nil
 }
 
 func (s *sessionManager) createTemplatesDirectoryIfNotExists() error {
