@@ -2,6 +2,7 @@ package session_manager
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -165,4 +166,50 @@ func (s *sessionManager) CreateSession(ctx context.Context, args CreateSessionAr
 	logger.Printf("session created: %s\n", newSession.String())
 
 	return newSession, nil
+}
+
+func (s *sessionManager) addSession(ctx context.Context, sess session) error {
+	sessions, err := s.ListSessions(ctx)
+	if err != nil {
+		return err
+	}
+
+	// check if the session already exists by the same name
+	for _, session := range sessions {
+		if session.ID == sess.ID {
+			return fmt.Errorf("session with ID %s already exists", sess.ID)
+		}
+	}
+
+	// add the session to the list of sessions
+	sessions = append(sessions, sess)
+
+	// save the sessions
+	file, err := s.storage.OpenFile("sessions.json")
+	if err != nil {
+		return fmt.Errorf("failed to open sessions file: %v", err)
+	}
+	defer file.Close()
+
+	data, err := json.MarshalIndent(sessions, "", "    ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal sessions: %v", err)
+	}
+
+	err = file.Truncate(0)
+	if err != nil {
+		return fmt.Errorf("failed to truncate sessions: %v", err)
+	}
+
+	_, err = file.Write(data)
+	if err != nil {
+		return fmt.Errorf("failed to write sessions: %v", err)
+	}
+
+	err = file.Sync()
+	if err != nil {
+		return fmt.Errorf("failed to sync sessions file: %v", err)
+	}
+
+	return nil
 }

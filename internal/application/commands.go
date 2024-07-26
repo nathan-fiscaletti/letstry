@@ -71,6 +71,13 @@ func (a *Application) registerCommands() {
 		IsPrivate: false,
 	})
 
+	a.registerCommand(registerCommandInput{
+		Name:    commands.CommandExportSession,
+		Command: commands.ExportSession,
+		//Help:      commands.ExportSessionHelp(),
+		IsPrivate: false,
+	})
+
 	// Private commands
 	a.registerCommand(registerCommandInput{
 		Name:      commands.CommandMonitor,

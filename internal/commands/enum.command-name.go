@@ -23,6 +23,7 @@ const (
 	CommandListTemplates  CommandName = "templates"
 	CommandDeleteTemplate CommandName = "delete-template"
 	CommandSaveTemplate   CommandName = "save"
+	CommandExportSession  CommandName = "export"
 )
 
 var allCommands = []CommandName{
@@ -33,6 +34,7 @@ var allCommands = []CommandName{
 	CommandListTemplates,
 	CommandDeleteTemplate,
 	CommandSaveTemplate,
+	CommandExportSession,
 }
 
 // GetCommandName returns the CommandName for the given string value. If the

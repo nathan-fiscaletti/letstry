@@ -47,26 +47,21 @@ func (s *sessionManager) SaveSessionAsTemplate(ctx context.Context, arg SaveSess
 	}
 
 	if s.storage.DirectoryExists(template.StoragePath()) {
-		logger.Printf("deleting existing template %s\n", template.StoragePath())
+		logger.Printf("template already exists, deleting template %s\n", template.String())
 		err = s.storage.DeleteDirectory(template.StoragePath())
 		if err != nil {
 			return "", err
 		}
 	}
 
-	logger.Printf("storing template in %s\n", template.AbsolutePath(ctx))
+	logger.Printf("creating template %s from session %s\n", template.String(), session.FormattedID())
 
 	err = s.storage.CreateDirectory(template.StoragePath())
 	if err != nil {
 		return "", err
 	}
 
-	templateAbsolutePath := template.AbsolutePath(ctx)
-
-	// Copy the session contents to the template directory
-	logger.Printf("copying %s to %s\n", session.Location, templateAbsolutePath)
-
-	err = copy.Copy(session.Location, templateAbsolutePath)
+	err = copy.Copy(session.Location, template.AbsolutePath(ctx))
 	if err != nil {
 		return "", err
 	}
