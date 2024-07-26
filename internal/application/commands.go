@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"slices"
 
 	"github.com/nathan-fiscaletti/letstry/internal/commands"
 )
@@ -172,10 +171,18 @@ func (a *Application) parseCommand() (*ParsedCommand, error) {
 		command = a.commands[commands.CommandHelp]
 	}
 
+	var isPrivate bool
+	for _, privateCommand := range a.privateCommands {
+		if privateCommand == commandName {
+			isPrivate = true
+			break
+		}
+	}
+
 	return &ParsedCommand{
 		Name:      commandName,
 		Execute:   command,
 		Arguments: args[1:],
-		IsPrivate: slices.Contains(a.privateCommands, commandName),
+		IsPrivate: isPrivate,
 	}, nil
 }
