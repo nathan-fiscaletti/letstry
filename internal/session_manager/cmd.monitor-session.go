@@ -9,17 +9,20 @@ import (
 
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
-	"github.com/shirou/gopsutil/process"
 )
 
 type MonitorSessionArguments struct {
-	PID int
+	Delay    time.Duration
+	Location string
 }
 
 func (s *sessionManager) MonitorSession(ctx context.Context, args MonitorSessionArguments) error {
+	// delay the start of the monitoring
+	time.Sleep(args.Delay)
+
 	// Start monitoring the session
-	return s.monitorProcessClosed(int32(args.PID), func() error {
-		session, err := s.GetSessionForPID(ctx, args.PID)
+	return s.monitorDirectoryAccessible(args.Location, func() error {
+		session, err := s.GetSessionForPath(ctx, args.Location)
 		if err != nil {
 			return err
 		}
@@ -29,7 +32,7 @@ func (s *sessionManager) MonitorSession(ctx context.Context, args MonitorSession
 			return err
 		}
 
-		logger.Printf("cleaning up session: %s (process closed, PID %d)\n", session.ID, session.PID)
+		logger.Printf("cleaning up session: %s (directory no longer being accessed)\n", session.ID)
 
 		err = s.removeSession(ctx, session.ID)
 		if err != nil {
@@ -40,19 +43,28 @@ func (s *sessionManager) MonitorSession(ctx context.Context, args MonitorSession
 	})
 }
 
-func (s *sessionManager) monitorProcessClosed(pid int32, callback func() error) error {
-	p, err := process.NewProcess(pid)
-	if err != nil {
-		return err
-	}
-
+func (s *sessionManager) monitorDirectoryAccessible(path string, callback func() error) error {
 	for {
-		exists, err := p.IsRunning()
+		_, err := os.Stat(path)
 		if err != nil {
+			if os.IsNotExist(err) {
+				return callback()
+			}
+
 			return err
 		}
 
-		if !exists {
+		// try moving the directory, if we are able to move it, then it is no longer being accessed
+		now := time.Now()
+		newPath := fmt.Sprintf("%s-%d", path, now.Unix())
+		err = os.Rename(path, newPath)
+		if err == nil {
+			// move the directory back
+			err = os.Rename(newPath, path)
+			if err != nil {
+				return err
+			}
+
 			return callback()
 		}
 

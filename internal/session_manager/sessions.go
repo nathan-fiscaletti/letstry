@@ -44,13 +44,6 @@ func (s *sessionManager) GetCurrentSession(ctx context.Context) (session, error)
 	return sess, err
 }
 
-// GetSessionForPID returns the session with the given PID
-func (s *sessionManager) GetSessionForPID(ctx context.Context, pid int) (session, error) {
-	return s.GetSessionForPredicate(ctx, func(sess session) bool {
-		return sess.PID == int32(pid)
-	})
-}
-
 // GetSessionForPath returns the session for the given path
 func (s *sessionManager) GetSessionForPath(ctx context.Context, path string) (session, error) {
 	return s.GetSessionForPredicate(ctx, func(sess session) bool {

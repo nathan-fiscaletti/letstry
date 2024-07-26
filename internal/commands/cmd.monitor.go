@@ -3,18 +3,36 @@ package commands
 import (
 	"context"
 	"errors"
-	"strconv"
+	"os"
+	"time"
 
 	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
 )
 
 var (
-	ErrMissingArgumentPID = errors.New("monitor: missing required argument PID")
+	ErrMissingArgumentDelay    = errors.New("monitor: missing required argument 'delay'")
+	ErrMissingArgumentLocation = errors.New("monitor: missing required argument 'location'")
 )
 
 func Monitor(ctx context.Context, args []string) error {
 	if len(args) < 1 {
-		return ErrMissingArgumentPID
+		return ErrMissingArgumentDelay
+	}
+
+	if len(args) < 2 {
+		return ErrMissingArgumentLocation
+	}
+
+	delay, err := time.ParseDuration(args[0])
+	if err != nil {
+		return err
+	}
+
+	location := args[1]
+
+	_, err = os.Stat(location)
+	if err != nil {
+		return err
 	}
 
 	manager, err := session_manager.GetSessionManager(ctx)
@@ -22,12 +40,8 @@ func Monitor(ctx context.Context, args []string) error {
 		return err
 	}
 
-	intVal, err := strconv.Atoi(args[0])
-	if err != nil {
-		return err
-	}
-
 	return manager.MonitorSession(ctx, session_manager.MonitorSessionArguments{
-		PID: intVal,
+		Delay:    delay,
+		Location: location,
 	})
 }
