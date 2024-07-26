@@ -72,9 +72,9 @@ func (a *Application) registerCommands() {
 	})
 
 	a.registerCommand(registerCommandInput{
-		Name:    commands.CommandExportSession,
-		Command: commands.ExportSession,
-		//Help:      commands.ExportSessionHelp(),
+		Name:      commands.CommandExportSession,
+		Command:   commands.ExportSession,
+		Help:      commands.ExportSessionHelp(),
 		IsPrivate: false,
 	})
 
@@ -126,6 +126,7 @@ Commands:
 	templates        List all templates
 	delete-template  Delete a template
 	save             Save a session as a template
+	export           Export the current session
 	help             Show this help message
 
 Run '` + cmdName + ` help <command>' for more information on a command.
