@@ -120,7 +120,7 @@ func (s *sessionManager) CreateSession(ctx context.Context, args CreateSessionAr
 	// Call this application again, but start it in the background as it's own process.
 	// This will allow the user to continue using the current terminal session.
 	logger.Printf("starting monitor process for session %s\n", newSession.FormattedID())
-	cmd = exec.Command(os.Args[0], "monitor", fmt.Sprintf("%v", editor.ProcessCaptureDelay), fmt.Sprintf("%s", newSession.Location))
+	cmd = exec.Command(os.Args[0], "monitor", fmt.Sprintf("%v", editor.ProcessCaptureDelay), newSession.Location)
 	err = cmd.Start()
 	if err != nil {
 		return zeroValue, fmt.Errorf("failed to start monitor process: %v", err)
