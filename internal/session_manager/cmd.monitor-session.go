@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
+	"runtime"
 	"time"
 
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
@@ -45,26 +47,7 @@ func (s *sessionManager) MonitorSession(ctx context.Context, args MonitorSession
 
 func (s *sessionManager) monitorDirectoryAccessible(path string, callback func() error) error {
 	for {
-		_, err := os.Stat(path)
-		if err != nil {
-			if os.IsNotExist(err) {
-				return callback()
-			}
-
-			return err
-		}
-
-		// try moving the directory, if we are able to move it, then it is no longer being accessed
-		now := time.Now()
-		newPath := fmt.Sprintf("%s-%d", path, now.Unix())
-		err = os.Rename(path, newPath)
-		if err == nil {
-			// move the directory back
-			err = os.Rename(newPath, path)
-			if err != nil {
-				return err
-			}
-
+		if !isInUse(path) {
 			return callback()
 		}
 
@@ -123,4 +106,31 @@ func (s *sessionManager) removeSession(ctx context.Context, id identifier.ID) er
 	}
 
 	return fmt.Errorf("session with id %s not found", id)
+}
+
+func isInUse(path string) bool {
+	switch runtime.GOOS {
+	case "windows":
+		newPath := fmt.Sprintf("%s-%v", path, time.Now().Unix())
+		err := os.Rename(path, newPath)
+		if err != nil {
+			return true
+		}
+
+		_ = os.Rename(newPath, path)
+		return false
+	default:
+		cmd := exec.Command("lsof", path)
+
+		if err := cmd.Run(); err != nil {
+			if exitError, ok := err.(*exec.ExitError); ok {
+				ec := exitError.ExitCode()
+				if ec == 1 {
+					return false
+				}
+			}
+		}
+
+		return true
+	}
 }
