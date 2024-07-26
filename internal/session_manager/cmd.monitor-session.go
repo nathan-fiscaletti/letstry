@@ -5,21 +5,26 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
+	"runtime"
 	"time"
 
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
-	"github.com/shirou/gopsutil/process"
 )
 
 type MonitorSessionArguments struct {
-	PID int
+	Delay    time.Duration
+	Location string
 }
 
 func (s *sessionManager) MonitorSession(ctx context.Context, args MonitorSessionArguments) error {
+	// delay the start of the monitoring
+	time.Sleep(args.Delay)
+
 	// Start monitoring the session
-	return s.monitorProcessClosed(int32(args.PID), func() error {
-		session, err := s.GetSessionForPID(ctx, args.PID)
+	return s.monitorDirectoryAccessible(args.Location, func() error {
+		session, err := s.GetSessionForPath(ctx, args.Location)
 		if err != nil {
 			return err
 		}
@@ -29,7 +34,7 @@ func (s *sessionManager) MonitorSession(ctx context.Context, args MonitorSession
 			return err
 		}
 
-		logger.Printf("cleaning up session: %s (process closed, PID %d)\n", session.ID, session.PID)
+		logger.Printf("cleaning up session: %s (directory no longer being accessed)\n", session.ID)
 
 		err = s.removeSession(ctx, session.ID)
 		if err != nil {
@@ -40,19 +45,9 @@ func (s *sessionManager) MonitorSession(ctx context.Context, args MonitorSession
 	})
 }
 
-func (s *sessionManager) monitorProcessClosed(pid int32, callback func() error) error {
-	p, err := process.NewProcess(pid)
-	if err != nil {
-		return err
-	}
-
+func (s *sessionManager) monitorDirectoryAccessible(path string, callback func() error) error {
 	for {
-		exists, err := p.IsRunning()
-		if err != nil {
-			return err
-		}
-
-		if !exists {
+		if !isInUse(path) {
 			return callback()
 		}
 
@@ -111,4 +106,31 @@ func (s *sessionManager) removeSession(ctx context.Context, id identifier.ID) er
 	}
 
 	return fmt.Errorf("session with id %s not found", id)
+}
+
+func isInUse(path string) bool {
+	switch runtime.GOOS {
+	case "windows":
+		newPath := fmt.Sprintf("%s-%v", path, time.Now().Unix())
+		err := os.Rename(path, newPath)
+		if err != nil {
+			return true
+		}
+
+		_ = os.Rename(newPath, path)
+		return false
+	default:
+		cmd := exec.Command("lsof", path)
+
+		if err := cmd.Run(); err != nil {
+			if exitError, ok := err.(*exec.ExitError); ok {
+				ec := exitError.ExitCode()
+				if ec == 1 {
+					return false
+				}
+			}
+		}
+
+		return true
+	}
 }

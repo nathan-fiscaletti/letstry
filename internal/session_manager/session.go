@@ -6,7 +6,6 @@ import (
 	"github.com/fatih/color"
 	"github.com/nathan-fiscaletti/letstry/internal/config"
 	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
-	"github.com/shirou/gopsutil/process"
 )
 
 type sessionSource struct {
@@ -42,36 +41,15 @@ func (s sessionSource) FormattedString() string {
 
 type session struct {
 	ID       identifier.ID `json:"id"`
-	PID      int32         `json:"pid"`
 	Location string        `json:"location"`
 	Source   sessionSource `json:"source"`
 	Editor   config.Editor `json:"editor"`
 }
 
-// GetProcess returns the process for the session
-func (s *session) GetProcess() (*process.Process, error) {
-	return process.NewProcess(s.PID)
-}
-
-// IsRunning returns true if the session is running
-func (s *session) IsRunning() bool {
-	_, err := process.NewProcess(s.PID)
-	return err == nil
-}
-
-func (s *session) Kill() {
-	proc, err := s.GetProcess()
-	if err != nil {
-		return
-	}
-
-	proc.Kill()
-}
-
 func (s *session) String() string {
 	src := s.Source.FormattedString()
 	id := s.FormattedID()
-	editor := color.BlueString("(%s, PID %d)", s.Editor.Name, s.PID)
+	editor := color.BlueString("(%s)", s.Editor.Name)
 
 	return fmt.Sprintf("id=%s, editor=%s, src=%s", id, editor, src)
 }
