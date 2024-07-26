@@ -2,11 +2,17 @@ package session_manager
 
 import (
 	"context"
+	"errors"
 	"os"
+	"path/filepath"
 
 	"github.com/fatih/color"
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/config"
+)
+
+var (
+	ErrInvalidSessionSource = errors.New("invalid session source")
 )
 
 type SessionSourceType string
@@ -33,8 +39,17 @@ func (s *sessionManager) GetSessionSourceType(ctx context.Context, value string)
 		return SessionSourceTypeBlank, nil
 	}
 
+	// Check if directory exists and is a directory.
+	absPath, err := filepath.Abs(value)
+	if err == nil {
+		stat, err := os.Stat(absPath)
+		if err == nil && stat.IsDir() {
+			return SessionSourceTypeDirectory, nil
+		}
+	}
+
 	// Check for template.
-	_, err := s.GetTemplate(ctx, value)
+	_, err = s.GetTemplate(ctx, value)
 	if err == nil {
 		return SessionSourceTypeTemplate, nil
 	}
@@ -47,15 +62,5 @@ func (s *sessionManager) GetSessionSourceType(ctx context.Context, value string)
 		return SessionSourceTypeRepository, nil
 	}
 
-	// Check if directory exists and is a directory.
-	stat, err := os.Stat(value)
-	if err != nil {
-		return "", err
-	}
-
-	if !stat.IsDir() {
-		return "", os.ErrNotExist
-	}
-
-	return SessionSourceTypeDirectory, nil
+	return "", ErrInvalidSessionSource
 }

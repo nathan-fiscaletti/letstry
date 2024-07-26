@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -57,12 +58,16 @@ func (s *sessionManager) CreateSession(ctx context.Context, args CreateSessionAr
 	case SessionSourceTypeBlank:
 		// Do nothing
 	case SessionSourceTypeDirectory:
-		if _, err := os.Stat(args.Source); err != nil {
-			return zeroValue, fmt.Errorf("directory %s does not exist", args.Source)
+		absPath, err := filepath.Abs(args.Source)
+		if err != nil {
+			return zeroValue, fmt.Errorf("failed to get absolute path: %v", err)
+		}
+		if _, err := os.Stat(absPath); err != nil {
+			return zeroValue, fmt.Errorf("directory %s does not exist", absPath)
 		}
 
 		// Copy the directory to the temporary directory
-		err = copy.Copy(args.Source, tempDir)
+		err = copy.Copy(absPath, tempDir)
 		if err != nil {
 			return zeroValue, fmt.Errorf("failed to copy directory: %v", err)
 		}
