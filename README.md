@@ -1,16 +1,6 @@
 # letstry
 
-letstry is a powerful tool designed to streamline project creation and management within VSCode, built in Golang. It provides users with a suite of features to create, manage, and export project templates, ensuring a smooth workflow for developers.
-
-> If you want to understand in what ways letstry can help you, you are highly encouraged to read the [Use Cases](./docs/use-cases.md) section.
-
-## Features
-
-- **Project Creation**: Create new projects with a simple command. The tool initializes a temporary directory and opens it in VSCode for quick prototyping.
-- **Template Management**: Save, export, import, list, and remove project templates with ease. Templates can be tagged with languages for better organization.
-- **Session Tracking**: Track active VSCode sessions by PID, and prompt users to save their projects upon closing the VSCode window.
-- **Export and Save**: Export projects to a specified path, save them as templates for future use, or export them to a git repository.
-- **Custom Templates**: Set a default template, update it, or create new ones based on your needs.
+letstry is a powerful tool designed to provide temporary work-spaces for developers, built in Golang. It allows you to quickly create new projects, save them as templates, and export them to a more permanent location.
 
 ## Installation
 
@@ -26,68 +16,94 @@ If you'd rather use the `lt` alias, you can install it using the following comma
 $ go install github.com/nathan-fiscaletti/letstry/cmd/lt@latest
 ```
 
-Alternately, you can install it by cloning the repository and building from source:
-
-```sh
-$ git clone git@github.com:nathan-fiscaletti/letstry.git
-$ go install ./...
-```
-
 ## Usage
 
-### Project Creation
+### Creating a new Session
 
-Creating a new project with letstry is simple and efficient. Use the `lt new` command to initialize a temporary project directory and open it in VSCode. This allows for quick prototyping. If you like the results, you can export the project to a more permanent location or save it as a template. 
+Creating a new session with letstry is simple and efficient. Use the `lt new` command to initialize a temporary project directory and open it in the default editor. This allows for quick prototyping. If you like the results, you can export the session to a more permanent location or save it as a template. 
 
 ```sh
-lt new -template <template_name> -name <session_name>
+$ lt new
 ```
 
-If the VSCode window is closed and you haven't configured letstry to display the "Do you want to save your project" dialog, the temporary directory will be deleted. Therefore, you should either export your project using `lt session export` or save it as a template using `lt session save`.
+If the VSCode window is closed, the temporary directory will be deleted. Therefore, you should either export your project using `lt export <path>` or save it as a template using `lt save <template-name>`.
+
+Lets try sessions can be created from a directory path, a git repository URL, or a template name.
+
+```sh
+$ lt new <repository-url>
+$ lt new <directory-path>
+$ lt new <template-name>
+```
+
+### Exporting a Session
+
+To export a session, use the `lt export` command from within the sessions directory. This will copy the session to the directory you specify.
+
+```sh
+$ lt export <path>
+```
+
+### Listing active sessions
+
+To list all active sessions, use the `lt list` command.
+
+```sh
+$ lt list
+```
 
 ### Managing Templates
 
-Templates in letstry allow you to save and reuse project structures. You can manage templates using various commands:
+**Creating a template**
 
-- **Set Default Template**: Update the default template used for new projects.
-- **Export and Import Templates**: Share templates with others or use them on different machines.
-- **List and Remove Templates**: Keep your template library organized.
-- **Tagging Templates**: Tag templates with languages to quickly find the right template for your project.
+Templates are a powerful feature of letstry. They allow you to save a project as a template and quickly create new projects based on that template.
 
-These capabilities help maintain consistency and efficiency, especially when working on multiple projects or collaborating with others.
-
-### Session Tracking
-
-letstry tracks active VSCode sessions by their PID. This tracking allows the tool to prompt you to save your work when you close VSCode, preventing data loss. Commands related to sessions include listing active sessions, killing a session, exporting a session, and saving a session as a template.
+To save an active session as a template, use the `lt save` command from within the sessions directory.
 
 ```sh
-lt session list
-lt session kill <name|pid>
-lt session export <name|pid> <path>
-lt session save <name|pid> <template_name>
+$ lt save [name]
 ```
 
-Session tracking ensures that you always have control over your active projects and can easily manage them.
+If the session was initially created from an existing template, you can omit the name argument and the original template will be updated with the new session.
 
-### Export and Save
+**Listing Templates**
 
-The export and save features allow you to export projects to a specified path, save them as templates for future use, or export them to a git repository. This functionality is particularly useful for creating backups or sharing your project setup with others.
+To list all available templates, use the `lt templates` command.
 
 ```sh
-lt template export <template_name> <path>
-lt template import <path>
-lt session export <name|pid> <path>
-lt session save <name|pid> <template_name>
-lt session export <name|pid> <repository_url>
+$ lt templates
 ```
 
-By using these commands, you can ensure that your work is always preserved and easily transferable.
+**Deleting a Template**
 
-## Workflow
+To delete a template, use the `lt delete-template` command.
 
-1. **Creating a New Project**: When you create a new project with `lt new`, a temporary directory is created, and VSCode opens in that directory. The project can be based on a specified template.
-2. **Tracking Sessions**: Each VSCode process is tracked by PID in a `~/.letstry` file. This allows the tool to monitor processes and prompt users to save their work before closing. If not saved, the temporary directory is deleted upon closing VSCode.
-3. **Managing Templates**: Templates are an essential part of letstry, enabling you to quickly set up projects with predefined structures. You can manage these templates using the provided commands.
+```sh
+$ lt delete-template <name>
+```
+
+## Configuration
+
+letstry can be configured using a configuration file. The configuration file is located at `~/.letstry/config.json`.
+
+The config file allows you to specify different editors if you do not use VSCode. By default, it is loaded with VSCode.
+
+**Windows Config Example**
+
+`$HOME\.letstry\config.json`
+```json
+{
+    "default_editor": "vscode",
+    "editors": [
+        {
+            "name": "vscode",
+            "path": "C:\\Users\\yourname\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+            "args": "-n",
+            "process_capture_delay": 2000000000
+        }
+    ]
+}
+```
 
 ## Contributing
 
