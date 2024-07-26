@@ -37,12 +37,24 @@ var allCommands = []CommandName{
 	CommandExportSession,
 }
 
+var commandAliases = map[CommandName][]string{
+	CommandHelp: {"-h", "?", "--help"},
+}
+
 // GetCommandName returns the CommandName for the given string value. If the
 // value is not a valid CommandName, ErrUnknownCommand will be returned.
 func GetCommandName(value string) (CommandName, error) {
 	for _, command := range GetCommandNames() {
 		if strings.EqualFold(command.String(), value) {
 			return command, nil
+		}
+	}
+
+	for command, aliases := range commandAliases {
+		for _, alias := range aliases {
+			if strings.EqualFold(alias, value) {
+				return command, nil
+			}
 		}
 	}
 
