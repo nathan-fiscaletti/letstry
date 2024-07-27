@@ -3,7 +3,7 @@ package commands
 import (
 	"context"
 
-	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
+	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
 func SaveTemplateHelp() string {
@@ -39,12 +39,12 @@ func SaveTemplate(ctx context.Context, args []string) error {
 		templateName = args[0]
 	}
 
-	manager, err := session_manager.GetSessionManager(ctx)
+	mgr, err := manager.GetManager(ctx)
 	if err != nil {
 		return err
 	}
 
-	_, err = manager.SaveSessionAsTemplate(ctx, session_manager.SaveSessionAsTemplateArguments{
+	_, err = mgr.SaveSessionAsTemplate(ctx, manager.SaveSessionAsTemplateArguments{
 		TemplateName: templateName,
 	})
 

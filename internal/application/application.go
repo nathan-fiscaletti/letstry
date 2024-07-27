@@ -9,6 +9,7 @@ import (
 
 	"github.com/nathan-fiscaletti/letstry/internal/commands"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
+	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
 var (
@@ -31,6 +32,9 @@ func NewApplication(ctx context.Context) *Application {
 	if err != nil {
 		panic(err)
 	}
+
+	// Initialize session manager
+	ctx = manager.ContextWithManager(ctx)
 
 	// Initialize logging
 	ctx = logging.ContextWithLogger(ctx, logger)

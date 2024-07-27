@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type ExportSessionArguments struct {
 	Path string
 }
 
-func (s *sessionManager) ExportSession(ctx context.Context, arg ExportSessionArguments) error {
+func (s *manager) ExportSession(ctx context.Context, arg ExportSessionArguments) error {
 	session, err := s.GetCurrentSession(ctx)
 	if err != nil {
 		return err

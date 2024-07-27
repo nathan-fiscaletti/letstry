@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"context"
@@ -20,7 +20,7 @@ type CreateSessionArguments struct {
 	Source string `json:"source"`
 }
 
-func (s *sessionManager) CreateSession(ctx context.Context, args CreateSessionArguments) (session, error) {
+func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments) (session, error) {
 	var zeroValue session
 
 	sourceType, err := s.GetSessionSourceType(ctx, args.Source)
@@ -132,7 +132,7 @@ func (s *sessionManager) CreateSession(ctx context.Context, args CreateSessionAr
 	return newSession, nil
 }
 
-func (s *sessionManager) addSession(ctx context.Context, sess session) error {
+func (s *manager) addSession(ctx context.Context, sess session) error {
 	sessions, err := s.ListSessions(ctx)
 	if err != nil {
 		return err

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
-	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
+	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
 func ListTemplatesHelp() string {
@@ -19,19 +19,20 @@ Usage:
 
 Description:
 
-    Lists available templates.
+    This command will list all available templates that can be used when
+    creating a new session.
 
 Run '` + cmdName + ` help' for information on additional commands.
 `
 }
 
 func ListTemplates(ctx context.Context, args []string) error {
-	manager, err := session_manager.GetSessionManager(ctx)
+	mgr, err := manager.GetManager(ctx)
 	if err != nil {
 		return err
 	}
 
-	templates, err := manager.ListTemplates(ctx)
+	templates, err := mgr.ListTemplates(ctx)
 	if err != nil {
 		return err
 	}

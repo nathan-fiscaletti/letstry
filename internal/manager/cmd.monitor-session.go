@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"context"
@@ -18,7 +18,7 @@ type MonitorSessionArguments struct {
 	Location string
 }
 
-func (s *sessionManager) MonitorSession(ctx context.Context, args MonitorSessionArguments) error {
+func (s *manager) MonitorSession(ctx context.Context, args MonitorSessionArguments) error {
 	// delay the start of the monitoring
 	time.Sleep(args.Delay)
 
@@ -45,7 +45,7 @@ func (s *sessionManager) MonitorSession(ctx context.Context, args MonitorSession
 	})
 }
 
-func (s *sessionManager) monitorDirectoryAccessible(path string, callback func() error) error {
+func (s *manager) monitorDirectoryAccessible(path string, callback func() error) error {
 	for {
 		if !isInUse(path) {
 			return callback()
@@ -55,7 +55,7 @@ func (s *sessionManager) monitorDirectoryAccessible(path string, callback func()
 	}
 }
 
-func (s *sessionManager) removeSession(ctx context.Context, id identifier.ID) error {
+func (s *manager) removeSession(ctx context.Context, id identifier.ID) error {
 	sessions, err := s.ListSessions(ctx)
 	if err != nil {
 		return err

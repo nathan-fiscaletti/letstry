@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func (s *sessionManager) ListSessions(ctx context.Context) ([]session, error) {
+func (s *manager) ListSessions(ctx context.Context) ([]session, error) {
 	var sessions []session = make([]session, 0)
 
 	var defaultSessions []byte
