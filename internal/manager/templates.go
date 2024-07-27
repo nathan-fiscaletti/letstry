@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"context"
@@ -33,7 +33,7 @@ func (t Template) FormattedString(ctx context.Context) string {
 }
 
 func (t Template) AbsolutePath(ctx context.Context) string {
-	sessionMgr, err := GetSessionManager(ctx)
+	sessionMgr, err := GetManager(ctx)
 	if err != nil {
 		panic(err)
 	}
@@ -45,7 +45,7 @@ func (t Template) StoragePath() string {
 	return filepath.Join("templates", t.String())
 }
 
-func (s *sessionManager) GetTemplate(ctx context.Context, name string) (Template, error) {
+func (s *manager) GetTemplate(ctx context.Context, name string) (Template, error) {
 	template := Template(name)
 
 	if !s.storage.DirectoryExists(template.StoragePath()) {
@@ -55,7 +55,7 @@ func (s *sessionManager) GetTemplate(ctx context.Context, name string) (Template
 	return template, nil
 }
 
-func (s *sessionManager) createTemplatesDirectoryIfNotExists() error {
+func (s *manager) createTemplatesDirectoryIfNotExists() error {
 	if !s.storage.DirectoryExists("templates") {
 		err := s.storage.CreateDirectory("templates")
 		if err != nil {

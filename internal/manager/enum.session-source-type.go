@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"context"
@@ -33,7 +33,7 @@ const (
 )
 
 // GetSessionSourceType returns the type of session source for the given value.
-func (s *sessionManager) GetSessionSourceType(ctx context.Context, value string) (SessionSourceType, error) {
+func (s *manager) GetSessionSourceType(ctx context.Context, value string) (SessionSourceType, error) {
 	// Check for blank value.
 	if value == "" {
 		return SessionSourceTypeBlank, nil

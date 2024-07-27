@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"context"
@@ -16,7 +16,7 @@ type SaveSessionAsTemplateArguments struct {
 	TemplateName string `json:"template_name"`
 }
 
-func (s *sessionManager) SaveSessionAsTemplate(ctx context.Context, arg SaveSessionAsTemplateArguments) (Template, error) {
+func (s *manager) SaveSessionAsTemplate(ctx context.Context, arg SaveSessionAsTemplateArguments) (Template, error) {
 	logger, err := logging.LoggerFromContext(ctx)
 	if err != nil {
 		return "", err

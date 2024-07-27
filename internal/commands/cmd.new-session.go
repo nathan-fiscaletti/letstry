@@ -3,7 +3,7 @@ package commands
 import (
 	"context"
 
-	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
+	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
 func NewSessionHelp() string {
@@ -40,12 +40,12 @@ func NewSession(ctx context.Context, args []string) error {
 		source = args[0]
 	}
 
-	manager, err := session_manager.GetSessionManager(ctx)
+	mgr, err := manager.GetManager(ctx)
 	if err != nil {
 		return err
 	}
 
-	_, err = manager.CreateSession(ctx, session_manager.CreateSessionArguments{
+	_, err = mgr.CreateSession(ctx, manager.CreateSessionArguments{
 		Source: source,
 	})
 	if err != nil {

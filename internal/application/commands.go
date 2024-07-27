@@ -77,6 +77,20 @@ func (a *Application) registerCommands() {
 		IsPrivate: false,
 	})
 
+	a.registerCommand(registerCommandInput{
+		Name:      commands.CommandListEditors,
+		Command:   commands.ListEditors,
+		Help:      commands.ListEditorsHelp(),
+		IsPrivate: false,
+	})
+
+	a.registerCommand(registerCommandInput{
+		Name:      commands.CommandSetEditor,
+		Command:   commands.SetEditor,
+		Help:      commands.SetEditorHelp(),
+		IsPrivate: false,
+	})
+
 	// Private commands
 	a.registerCommand(registerCommandInput{
 		Name:      commands.CommandMonitor,
@@ -123,6 +137,8 @@ Commands:
 	new              Create a new session
 	list             List all sessions
 	templates        List all templates
+	editors          List all editors
+	set-editor       Set the default editor
 	delete-template  Delete a template
 	save             Save a session as a template
 	export           Export the current session

@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"context"
@@ -14,7 +14,7 @@ var (
 )
 
 // GetSession returns the session with the given ID
-func (s *sessionManager) GetSession(ctx context.Context, id identifier.ID) (session, error) {
+func (s *manager) GetSession(ctx context.Context, id identifier.ID) (session, error) {
 	sessions, err := s.ListSessions(ctx)
 	if err != nil {
 		return session{}, err
@@ -30,7 +30,7 @@ func (s *sessionManager) GetSession(ctx context.Context, id identifier.ID) (sess
 }
 
 // GetCurrentSession returns the session for the current working directory
-func (s *sessionManager) GetCurrentSession(ctx context.Context) (session, error) {
+func (s *manager) GetCurrentSession(ctx context.Context) (session, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return session{}, fmt.Errorf("failed to get current working directory: %v", err)
@@ -45,14 +45,14 @@ func (s *sessionManager) GetCurrentSession(ctx context.Context) (session, error)
 }
 
 // GetSessionForPath returns the session for the given path
-func (s *sessionManager) GetSessionForPath(ctx context.Context, path string) (session, error) {
+func (s *manager) GetSessionForPath(ctx context.Context, path string) (session, error) {
 	return s.GetSessionForPredicate(ctx, func(sess session) bool {
 		return sess.Location == path
 	})
 }
 
 // GetSessionForPredicate returns the session that matches the given predicate
-func (s *sessionManager) GetSessionForPredicate(ctx context.Context, predicate func(session) bool) (session, error) {
+func (s *manager) GetSessionForPredicate(ctx context.Context, predicate func(session) bool) (session, error) {
 	// get the list of sessions
 	sessions, err := s.ListSessions(ctx)
 	if err != nil {

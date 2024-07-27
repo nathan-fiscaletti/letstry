@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
-	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
+	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
 func ListSessionsHelp() string {
@@ -19,19 +19,19 @@ Usage:
 
 Description:
 
-    Lists running sessions.
+    This command will list all currently running sessions.
 
 Run '` + cmdName + ` help' for information on additional commands.
 `
 }
 
 func ListSessions(ctx context.Context, args []string) error {
-	manager, err := session_manager.GetSessionManager(ctx)
+	mgr, err := manager.GetManager(ctx)
 	if err != nil {
 		return err
 	}
 
-	sessions, err := manager.ListSessions(ctx)
+	sessions, err := mgr.ListSessions(ctx)
 	if err != nil {
 		return err
 	}

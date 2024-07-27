@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"fmt"

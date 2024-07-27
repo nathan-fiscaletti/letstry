@@ -19,6 +19,10 @@ func (e Editor) GetExecName() string {
 	return filepath.Base(e.ExecPath)
 }
 
+func (e Editor) FullString() string {
+	return fmt.Sprintf("name: %s, location: %s, args: %s", color.BlueString(e.Name), color.YellowString(e.ExecPath), color.GreenString(e.Args))
+}
+
 func (e Editor) String() string {
 	return color.BlueString(fmt.Sprintf("(%s, %s)", e.Name, e.GetExecName()))
 }

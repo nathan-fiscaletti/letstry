@@ -1,8 +1,8 @@
-package session_manager
+package manager
 
 import "context"
 
-func (s *sessionManager) ListTemplates(ctx context.Context) ([]Template, error) {
+func (s *manager) ListTemplates(ctx context.Context) ([]Template, error) {
 	templates, err := s.storage.ListDirectories("templates")
 	if err != nil {
 		return nil, err

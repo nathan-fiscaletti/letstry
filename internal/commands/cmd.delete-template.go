@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
+	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
 var (
@@ -40,17 +40,17 @@ func DeleteTemplate(ctx context.Context, args []string) error {
 
 	templateName := args[0]
 
-	manager, err := session_manager.GetSessionManager(ctx)
+	mgr, err := manager.GetManager(ctx)
 	if err != nil {
 		return err
 	}
 
-	template, err := manager.GetTemplate(ctx, templateName)
+	template, err := mgr.GetTemplate(ctx, templateName)
 	if err != nil {
 		return err
 	}
 
-	err = manager.DeleteTemplate(ctx, template)
+	err = mgr.DeleteTemplate(ctx, template)
 	if err != nil {
 		return err
 	}

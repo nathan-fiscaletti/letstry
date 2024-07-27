@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/nathan-fiscaletti/letstry/internal/session_manager"
+	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
 var (
@@ -35,12 +35,12 @@ func Monitor(ctx context.Context, args []string) error {
 		return err
 	}
 
-	manager, err := session_manager.GetSessionManager(ctx)
+	mgr, err := manager.GetManager(ctx)
 	if err != nil {
 		return err
 	}
 
-	return manager.MonitorSession(ctx, session_manager.MonitorSessionArguments{
+	return mgr.MonitorSession(ctx, manager.MonitorSessionArguments{
 		Delay:    delay,
 		Location: location,
 	})

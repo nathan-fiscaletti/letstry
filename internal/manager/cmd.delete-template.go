@@ -1,4 +1,4 @@
-package session_manager
+package manager
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 )
 
-func (s *sessionManager) DeleteTemplate(ctx context.Context, t Template) error {
+func (s *manager) DeleteTemplate(ctx context.Context, t Template) error {
 	logger, err := logging.LoggerFromContext(ctx)
 	if err != nil {
 		return err

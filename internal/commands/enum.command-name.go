@@ -21,6 +21,8 @@ const (
 	CommandNewSession     CommandName = "new"
 	CommandListSessions   CommandName = "list"
 	CommandListTemplates  CommandName = "templates"
+	CommandListEditors    CommandName = "editors"
+	CommandSetEditor      CommandName = "set-editor"
 	CommandDeleteTemplate CommandName = "delete-template"
 	CommandSaveTemplate   CommandName = "save"
 	CommandExportSession  CommandName = "export"
@@ -32,6 +34,8 @@ var allCommands = []CommandName{
 	CommandNewSession,
 	CommandListSessions,
 	CommandListTemplates,
+	CommandListEditors,
+	CommandSetEditor,
 	CommandDeleteTemplate,
 	CommandSaveTemplate,
 	CommandExportSession,

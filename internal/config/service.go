@@ -49,6 +49,24 @@ func GetConfig() (*Config, error) {
 	return config, nil
 }
 
+func SaveConfig(cfg *Config) error {
+	store := storage.GetStorage()
+
+	file, err := store.OpenFile("config.json")
+	if err != nil {
+		return fmt.Errorf("failed to open config file: %v", err)
+	}
+
+	defer file.Close()
+	encoder := json.NewEncoder(file)
+	encoder.SetIndent("", "    ")
+	if err := encoder.Encode(cfg); err != nil {
+		return fmt.Errorf("failed to encode config file: %v", err)
+	}
+
+	return nil
+}
+
 func getDefaultConfig() *Config {
 	currentUser, err := user.Current()
 	if err != nil {
