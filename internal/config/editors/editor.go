@@ -2,6 +2,7 @@ package editors
 
 import (
 	"fmt"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -61,7 +62,7 @@ type Editor struct {
 }
 
 func (e Editor) IsInstalled() bool {
-	_, err := filepath.Abs(e.ExecPath)
+	_, err := os.Stat(e.ExecPath)
 	return err == nil
 }
 
