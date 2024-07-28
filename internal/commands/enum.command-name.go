@@ -44,7 +44,8 @@ var allCommands = []CommandName{
 }
 
 var commandAliases = map[CommandName][]string{
-	CommandHelp: {"-h", "?", "--help"},
+	CommandHelp:    {"-h", "?", "--help"},
+	CommandVersion: {"-v", "--version"},
 }
 
 // GetCommandName returns the CommandName for the given string value. If the
