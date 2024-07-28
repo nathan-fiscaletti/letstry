@@ -8,11 +8,7 @@ import (
 
 func LetsTry() {
 	// Initialize the Context
-	appContext := context.Background()
-
-	// Initialize the Application
-	app := application.NewApplication(appContext)
-
-	// Start the Application
-	app.Start()
+	application.NewApplication(
+		context.Background(),
+	).Start()
 }

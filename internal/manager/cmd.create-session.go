@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/nathan-fiscaletti/letstry/internal/config"
+	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
 	"github.com/otiai10/copy"
@@ -96,7 +97,12 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 	cfgArgs := strings.Split(editor.Args, " ")
 	cmdArgs := append(cfgArgs, tempDir)
 	cmd := exec.Command(editor.ExecPath, cmdArgs...)
-	err = cmd.Run()
+	switch editor.RunType {
+	case editors.EditorRunTypeRun:
+		err = cmd.Run()
+	case editors.EditorRunTypeStart:
+		err = cmd.Start()
+	}
 	if err != nil {
 		return zeroValue, fmt.Errorf("failed to run editor: %v", err)
 	}
@@ -105,6 +111,7 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 	newSession := session{
 		ID:       identifier.NewID(),
 		Location: tempDir,
+		PID:      cmd.Process.Pid,
 		Source:   sessionSource{SourceType: sourceType, Value: args.Source},
 		Editor:   editor,
 	}
@@ -119,15 +126,18 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 
 	// Call this application again, but start it in the background as it's own process.
 	// This will allow the user to continue using the current terminal session.
-	logger.Printf("starting monitor process for session %s\n", newSession.FormattedID())
-	cmd = exec.Command(os.Args[0], "monitor", fmt.Sprintf("%v", editor.ProcessCaptureDelay), newSession.Location)
-	err = cmd.Start()
-	if err != nil {
-		return zeroValue, fmt.Errorf("failed to start monitor process: %v", err)
+	if os.Getenv("DEBUGGER_ATTACHED") == "true" {
+		logger.Printf("skipping monitor process for session %s (debugger attached)\n", newSession.FormattedID())
+	} else {
+		logger.Printf("starting monitor process for session %s\n", newSession.FormattedID())
+		cmd = exec.Command(os.Args[0], "monitor", fmt.Sprintf("%v", editor.ProcessCaptureDelay), newSession.Location, editor.TrackingType.String())
+		err = cmd.Start()
+		if err != nil {
+			return zeroValue, fmt.Errorf("failed to start monitor process: %v", err)
+		}
+		logger.Printf("monitor process started with PID %v\n", cmd.Process.Pid)
+		logger.Printf("session created: %s\n", newSession.String())
 	}
-	logger.Printf("monitor process started with PID %v\n", cmd.Process.Pid)
-
-	logger.Printf("session created: %s\n", newSession.String())
 
 	return newSession, nil
 }

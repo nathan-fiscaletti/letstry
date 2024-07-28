@@ -2,42 +2,31 @@ package config
 
 import (
 	"fmt"
-	"path/filepath"
-	"time"
 
-	"github.com/fatih/color"
+	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
 )
 
-type Editor struct {
-	Name                string        `json:"name"`
-	ExecPath            string        `json:"path"`
-	Args                string        `json:"args"`
-	ProcessCaptureDelay time.Duration `json:"process_capture_delay"`
-}
-
-func (e Editor) GetExecName() string {
-	return filepath.Base(e.ExecPath)
-}
-
-func (e Editor) FullString() string {
-	return fmt.Sprintf("name: %s, location: %s, args: %s", color.BlueString(e.Name), color.YellowString(e.ExecPath), color.GreenString(e.Args))
-}
-
-func (e Editor) String() string {
-	return color.BlueString(fmt.Sprintf("(%s, %s)", e.Name, e.GetExecName()))
-}
-
 type Config struct {
-	DefaultEditorName string   `json:"default_editor"`
-	AvailableEditors  []Editor `json:"editors"`
+	DefaultEditorName editors.EditorName `json:"default_editor"`
+	AvailableEditors  []editors.Editor   `json:"editors"`
 }
 
-func (cfg Config) GetDefaultEditor() (Editor, error) {
+func (cfg Config) GetEditor(name string) (editors.Editor, error) {
+	for _, editor := range cfg.AvailableEditors {
+		if editor.Name.String() == name {
+			return editor, nil
+		}
+	}
+
+	return editors.Editor{}, fmt.Errorf("editor %s not found", name)
+}
+
+func (cfg Config) GetDefaultEditor() (editors.Editor, error) {
 	for _, editor := range cfg.AvailableEditors {
 		if editor.Name == cfg.DefaultEditorName {
 			return editor, nil
 		}
 	}
 
-	return Editor{}, fmt.Errorf("editor %s not found", cfg.DefaultEditorName)
+	return editors.Editor{}, fmt.Errorf("editor %s not found", cfg.DefaultEditorName)
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
-	"github.com/nathan-fiscaletti/letstry/internal/config"
+	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
 	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
 )
 
@@ -40,10 +40,11 @@ func (s sessionSource) FormattedString() string {
 }
 
 type session struct {
-	ID       identifier.ID `json:"id"`
-	Location string        `json:"location"`
-	Source   sessionSource `json:"source"`
-	Editor   config.Editor `json:"editor"`
+	ID       identifier.ID  `json:"id"`
+	Location string         `json:"location"`
+	PID      int            `json:"pid"`
+	Source   sessionSource  `json:"source"`
+	Editor   editors.Editor `json:"editor"`
 }
 
 func (s *session) String() string {

@@ -18,18 +18,9 @@ func (s *manager) SetDefaultEditor(ctx context.Context, editorName string) error
 		return err
 	}
 
-	var found bool
-	var editor config.Editor
-	for _, availableEditor := range cfg.AvailableEditors {
-		if availableEditor.Name == editorName {
-			found = true
-			editor = availableEditor
-			break
-		}
-	}
-
-	if !found {
-		return ErrEditorNotFound
+	editor, err := cfg.GetEditor(editorName)
+	if err != nil {
+		return err
 	}
 
 	logger, err := logging.LoggerFromContext(ctx)
@@ -38,6 +29,6 @@ func (s *manager) SetDefaultEditor(ctx context.Context, editorName string) error
 	}
 
 	logger.Printf("Setting default editor to: %s\n", editor.String())
-	cfg.DefaultEditorName = editorName
+	cfg.DefaultEditorName = editor.Name
 	return config.SaveConfig(cfg)
 }

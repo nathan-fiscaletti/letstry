@@ -80,13 +80,17 @@ func (app *Application) Start() {
 	// Parse the command line
 	invocation, err := app.GetInvocation()
 	if err != nil {
-		panic(err)
+		logger, _ := logging.LoggerFromContext(app.GetContext())
+		logger.Printf("Error: %s\n", color.RedString(err.Error()))
+		os.Exit(1)
 	}
 
 	// Configure logging
 	err = invocation.UpdateLogger(app)
 	if err != nil {
-		panic(err)
+		logger, _ := logging.LoggerFromContext(app.GetContext())
+		logger.Printf("Error: %s\n", color.RedString(err.Error()))
+		os.Exit(1)
 	}
 	defer logging.CloseLog(app.GetContext())
 
