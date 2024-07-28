@@ -40,7 +40,7 @@ func Version(ctx context.Context, args []string) error {
 		logger.Println(color.HiWhiteString("!! new version (" + color.HiGreenString(latestVersion) + ") available"))
 		logger.Println("run 'go get -u", info.Path+"' to update")
 	} else {
-		logger.Printf("latest version: %s\n", latestVersion)
+		logger.Println(color.HiWhiteString("you are running the latest version"))
 	}
 
 	return nil
