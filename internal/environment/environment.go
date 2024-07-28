@@ -6,32 +6,32 @@ import (
 	"os"
 )
 
-type appEnvironmentCtxKey struct {
+type environmentCtxKey struct {
 	Name string
 }
 
 var (
-	appEnvironmentKey appEnvironmentCtxKey = appEnvironmentCtxKey{"app_environment"}
+	environmentKey environmentCtxKey = environmentCtxKey{"environment"}
 )
 
 var (
-	ErrAppEnvironmentNotFound = errors.New("app environment not found")
+	ErrEnvironmentNotFound = errors.New("environment not found")
 )
 
-type AppEnvironment struct {
+type Environment struct {
 	DebuggerAttached bool
 }
 
-func AppEnvironmentFromContext(ctx context.Context) (AppEnvironment, error) {
-	if env, ok := ctx.Value(appEnvironmentKey).(AppEnvironment); ok {
+func EnvironmentFromContext(ctx context.Context) (Environment, error) {
+	if env, ok := ctx.Value(environmentKey).(Environment); ok {
 		return env, nil
 	}
 
-	return AppEnvironment{}, ErrAppEnvironmentNotFound
+	return Environment{}, ErrEnvironmentNotFound
 }
 
-func ContextWithAppEnvironment(ctx context.Context) context.Context {
-	return context.WithValue(ctx, appEnvironmentKey, AppEnvironment{
+func ContextWithEnvironment(ctx context.Context) context.Context {
+	return context.WithValue(ctx, environmentKey, Environment{
 		DebuggerAttached: os.Getenv("DEBUGGER_ATTACHED") == "true",
 	})
 }

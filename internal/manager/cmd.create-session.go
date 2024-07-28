@@ -125,7 +125,7 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 		return zeroValue, err
 	}
 
-	appEnvironment, err := environment.AppEnvironmentFromContext(ctx)
+	appEnvironment, err := environment.EnvironmentFromContext(ctx)
 	if err != nil {
 		return zeroValue, err
 	}

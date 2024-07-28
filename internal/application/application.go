@@ -34,7 +34,7 @@ func NewApplication(ctx context.Context) *Application {
 	}
 
 	// Initialize environment
-	ctx = environment.ContextWithAppEnvironment(ctx)
+	ctx = environment.ContextWithEnvironment(ctx)
 
 	// Initialize session manager
 	ctx = manager.ContextWithManager(ctx)
