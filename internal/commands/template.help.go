@@ -17,6 +17,7 @@ Commands
 {{range .Commands}}
     {{$padded := padEnd .Name $longestLen -}}
     {{white $padded}}  {{.ShortDescription}}{{end}}
+{{$paddedHelp := padEnd "help" $longestLen}}    {{white $paddedHelp}}  Display this help message
 
 Run '{{.Name}} help <command>' for more information on a command.
 
