@@ -60,6 +60,11 @@ type Editor struct {
 	TrackingType        TrackingType  `json:"tracking_type"`
 }
 
+func (e Editor) IsInstalled() bool {
+	_, err := filepath.Abs(e.ExecPath)
+	return err == nil
+}
+
 func (e Editor) GetExecName() string {
 	return filepath.Base(e.ExecPath)
 }

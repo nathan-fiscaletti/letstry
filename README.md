@@ -86,11 +86,11 @@ $ lt delete-template <name>
 
 letstry can be configured using a configuration file. The configuration file is located at `~/.letstry/config.json`.
 
-The config file allows you to specify different editors if you do not use VSCode. By default, it is loaded with VSCode.
+The config file allows you to specify different editors if you do not use VSCode.
 
 **Windows Config Example**
 
-`$HOME\.letstry\config.json`
+`~/.letstry/config.json`
 ```json
 {
     "default_editor": "vscode",
