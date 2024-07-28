@@ -42,7 +42,7 @@ func VersionCommand() Command {
 			}
 
 			logger.Println("version:", info.Main.Version)
-			if info.Main.Version != latestVersion {
+			if info.Main.Version != latestVersion && info.Main.Version != "(devel)" {
 				logger.Println(color.HiWhiteString("!! new version (" + color.HiGreenString(latestVersion) + ") available"))
 				logger.Println("run 'go install", info.Path+"@"+latestVersion+"' to update")
 			} else {
