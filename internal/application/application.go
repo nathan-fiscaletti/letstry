@@ -67,6 +67,7 @@ func NewApplication(ctx context.Context) *Application {
 				commands.ExportSessionCommand(),
 				commands.ListEditorsCommand(),
 				commands.SetEditorCommand(),
+				commands.GetEditorCommand(),
 				commands.VersionCommand(),
 				commands.MonitorCommand(),
 			},
