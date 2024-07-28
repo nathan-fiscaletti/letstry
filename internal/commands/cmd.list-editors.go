@@ -8,25 +8,6 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
-func ListEditorsHelp() string {
-	cmdName := GetCallerName()
-
-	return `
-` + cmdName + `: editors -- Lists all available editors
-
-Usage:
-
-    ` + cmdName + ` editors
-
-Description:
-
-    This command lists all available editors that can be used when creating a
-    new session.
-
-Run '` + cmdName + ` help' for information on additional commands.
-`
-}
-
 func ListEditors(ctx context.Context, args []string) error {
 	mgr, err := manager.GetManager(ctx)
 	if err != nil {

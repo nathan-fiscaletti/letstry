@@ -7,24 +7,6 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
-func ListSessionsHelp() string {
-	cmdName := GetCallerName()
-
-	return `
-` + cmdName + `: list -- List running sessions
-
-Usage: 
-
-    ` + cmdName + ` list
-
-Description:
-
-    This command will list all currently running sessions.
-
-Run '` + cmdName + ` help' for information on additional commands.
-`
-}
-
 func ListSessions(ctx context.Context, args []string) error {
 	mgr, err := manager.GetManager(ctx)
 	if err != nil {

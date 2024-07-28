@@ -17,10 +17,9 @@ var (
 )
 
 type Application struct {
-	context         context.Context
-	commands        map[commands.CommandName]commands.Command
-	helpMessages    map[commands.CommandName]string
-	privateCommands []commands.CommandName
+	commands.CliApp
+
+	context context.Context
 }
 
 // NewApplication creates a new application instance
@@ -43,7 +42,7 @@ func NewApplication(ctx context.Context) *Application {
 	app := &Application{context: ctx}
 
 	// Register commands
-	app.registerCommands()
+	app.registerCli()
 
 	return app
 }
@@ -64,7 +63,7 @@ func (a *Application) Start() {
 
 	// Update the logging based on the command passed.
 	// If it is a private command, write to a file only.
-	if cmd.IsPrivate {
+	if cmd.Command.LogToFile {
 		logger, err = logging.New(&logging.LoggerConfig{
 			LogMode: logging.LogModeFile,
 		})
@@ -83,7 +82,7 @@ func (a *Application) Start() {
 	}()
 
 	// Run the command
-	err = cmd.Execute(a.GetContext(), cmd.Arguments)
+	err = cmd.Command.Execute(a.GetContext(), cmd.Arguments)
 	if err != nil {
 		logger.Printf("Error: %s\n", color.RedString(err.Error()))
 		os.Exit(1)

@@ -7,25 +7,6 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
-func ListTemplatesHelp() string {
-	cmdName := GetCallerName()
-
-	return `
-` + cmdName + `: templates -- List templates
-
-Usage: 
-
-    ` + cmdName + ` templates
-
-Description:
-
-    This command will list all available templates that can be used when
-    creating a new session.
-
-Run '` + cmdName + ` help' for information on additional commands.
-`
-}
-
 func ListTemplates(ctx context.Context, args []string) error {
 	mgr, err := manager.GetManager(ctx)
 	if err != nil {
