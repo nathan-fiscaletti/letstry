@@ -2,9 +2,7 @@ package commands
 
 import (
 	"context"
-	"os"
 
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
@@ -32,29 +30,11 @@ func NewSessionCommand() Command {
 				return err
 			}
 
-			session, err := mgr.CreateSession(ctx, manager.CreateSessionArguments{
+			_, err = mgr.CreateSession(ctx, manager.CreateSessionArguments{
 				Source: source,
 			})
 			if err != nil {
 				return err
-			}
-
-			if os.Getenv("DEBUGGER_ATTACHED") == "true" {
-				logger, err := logging.LoggerFromContext(ctx)
-				if err != nil {
-					return err
-				}
-
-				logger.Printf("starting monitor session for session %s\n", session.FormattedID())
-				err = mgr.MonitorSession(ctx, manager.MonitorSessionArguments{
-					Delay:        session.Editor.ProcessCaptureDelay,
-					TrackingType: session.Editor.TrackingType,
-					Location:     session.Location,
-					PID:          session.PID,
-				})
-				if err != nil {
-					return err
-				}
 			}
 
 			return nil

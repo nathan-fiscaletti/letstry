@@ -8,6 +8,7 @@ import (
 	"github.com/fatih/color"
 
 	"github.com/nathan-fiscaletti/letstry/internal/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/environment"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
@@ -31,6 +32,9 @@ func NewApplication(ctx context.Context) *Application {
 	if err != nil {
 		panic(err)
 	}
+
+	// Initialize environment
+	ctx = environment.ContextWithEnvironment(ctx)
 
 	// Initialize session manager
 	ctx = manager.ContextWithManager(ctx)

@@ -12,6 +12,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/nathan-fiscaletti/letstry/internal/config"
 	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
+	"github.com/nathan-fiscaletti/letstry/internal/environment"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
 	"github.com/otiai10/copy"
@@ -124,11 +125,26 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 		return zeroValue, err
 	}
 
-	// Call this application again, but start it in the background as it's own process.
-	// This will allow the user to continue using the current terminal session.
-	if os.Getenv("DEBUGGER_ATTACHED") == "true" {
+	appEnvironment, err := environment.EnvironmentFromContext(ctx)
+	if err != nil {
+		return zeroValue, err
+	}
+
+	if appEnvironment.DebuggerAttached {
 		logger.Printf("skipping monitor process for session %s (debugger attached)\n", newSession.FormattedID())
+		logger.Printf("starting monitor session for session %s\n", newSession.FormattedID())
+		err = s.MonitorSession(ctx, MonitorSessionArguments{
+			Delay:        newSession.Editor.ProcessCaptureDelay,
+			TrackingType: newSession.Editor.TrackingType,
+			Location:     newSession.Location,
+			PID:          newSession.PID,
+		})
+		if err != nil {
+			return zeroValue, err
+		}
 	} else {
+		// Call this application again, but start it in the background as it's own process.
+		// This will allow the user to continue using the current terminal session.
 		logger.Printf("starting monitor process for session %s\n", newSession.FormattedID())
 		cmd = exec.Command(os.Args[0], "monitor", fmt.Sprintf("%v", editor.ProcessCaptureDelay), newSession.Location, fmt.Sprintf("%v", newSession.PID), editor.TrackingType.String())
 		err = cmd.Start()
