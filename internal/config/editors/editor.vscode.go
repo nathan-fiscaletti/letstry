@@ -21,7 +21,7 @@ func VSCodeEditor() Editor {
 	var vsCodePath string
 	switch os := runtime.GOOS; os {
 	case "darwin":
-		vsCodePath = filepath.Join("Applications", "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code")
+		vsCodePath = filepath.Join("/", "Applications", "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code")
 	case "linux":
 		vsCodePath = filepath.Join(currentUser.HomeDir, "bin", "code")
 	case "windows":
