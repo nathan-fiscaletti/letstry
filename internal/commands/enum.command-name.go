@@ -17,6 +17,7 @@ func (c CommandName) String() string {
 
 const (
 	CommandHelp           CommandName = "help"
+	CommandVersion        CommandName = "version"
 	CommandMonitor        CommandName = "monitor"
 	CommandNewSession     CommandName = "new"
 	CommandListSessions   CommandName = "list"
@@ -30,6 +31,7 @@ const (
 
 var allCommands = []CommandName{
 	CommandHelp,
+	CommandVersion,
 	CommandMonitor,
 	CommandNewSession,
 	CommandListSessions,

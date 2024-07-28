@@ -1,204 +1,210 @@
 package application
 
 import (
-	"context"
-	"fmt"
 	"os"
 
 	"github.com/nathan-fiscaletti/letstry/internal/commands"
 )
 
-func (a *Application) IsCommand(name commands.CommandName) bool {
-	_, ok := a.commands[name]
-	return ok
-}
-
-type registerCommandInput struct {
-	Name      commands.CommandName
-	Command   commands.Command
-	Help      string
-	IsPrivate bool
-}
-
-func (a *Application) registerCommand(input registerCommandInput) {
-	a.commands[input.Name] = input.Command
-	if input.IsPrivate {
-		a.privateCommands = append(a.privateCommands, input.Name)
-	}
-	if input.Help != "" {
-		a.helpMessages[input.Name] = input.Help
-	}
-}
-
-func (a *Application) registerCommands() {
-	a.commands = make(map[commands.CommandName]commands.Command)
-	a.privateCommands = make([]commands.CommandName, 0)
-	a.helpMessages = make(map[commands.CommandName]string)
-
-	a.registerCommand(registerCommandInput{
-		Name:      commands.CommandNewSession,
-		Command:   commands.NewSession,
-		Help:      commands.NewSessionHelp(),
-		IsPrivate: false,
-	})
-
-	a.registerCommand(registerCommandInput{
-		Name:      commands.CommandListSessions,
-		Command:   commands.ListSessions,
-		Help:      commands.ListSessionsHelp(),
-		IsPrivate: false,
-	})
-
-	a.registerCommand(registerCommandInput{
-		Name:      commands.CommandListTemplates,
-		Command:   commands.ListTemplates,
-		Help:      commands.ListTemplatesHelp(),
-		IsPrivate: false,
-	})
-
-	a.registerCommand(registerCommandInput{
-		Name:      commands.CommandDeleteTemplate,
-		Command:   commands.DeleteTemplate,
-		Help:      commands.DeleteTemplateHelp(),
-		IsPrivate: false,
-	})
-
-	a.registerCommand(registerCommandInput{
-		Name:      commands.CommandSaveTemplate,
-		Command:   commands.SaveTemplate,
-		Help:      commands.SaveTemplateHelp(),
-		IsPrivate: false,
-	})
-
-	a.registerCommand(registerCommandInput{
-		Name:      commands.CommandExportSession,
-		Command:   commands.ExportSession,
-		Help:      commands.ExportSessionHelp(),
-		IsPrivate: false,
-	})
-
-	a.registerCommand(registerCommandInput{
-		Name:      commands.CommandListEditors,
-		Command:   commands.ListEditors,
-		Help:      commands.ListEditorsHelp(),
-		IsPrivate: false,
-	})
-
-	a.registerCommand(registerCommandInput{
-		Name:      commands.CommandSetEditor,
-		Command:   commands.SetEditor,
-		Help:      commands.SetEditorHelp(),
-		IsPrivate: false,
-	})
-
-	// Private commands
-	a.registerCommand(registerCommandInput{
-		Name:      commands.CommandMonitor,
-		Command:   commands.Monitor,
-		IsPrivate: true,
-	})
-
-	// Help Command
-	a.registerCommand(registerCommandInput{
-		Name: commands.CommandHelp,
-		Command: func(ctx context.Context, args []string) error {
-			var inputCmd string
-
-			if len(args) > 0 {
-				inputCmd = args[0]
-			}
-
-			if inputCmd != "" {
-				command, err := commands.GetCommandName(inputCmd)
-				if err != nil {
-					return err
-				}
-
-				if !a.IsCommand(command) {
-					return commands.ErrUnknownCommand
-				}
-
-				if helpMessage, ok := a.helpMessages[command]; ok {
-					fmt.Printf("%s\n", helpMessage)
-					return nil
-				}
-			}
-
-			cmdName := commands.GetCallerName()
-			helpMessage := `
-` + cmdName + `: a powerful tool for creating temporary workspaces
-
-Usage:
-
-	` + cmdName + ` <command> [arguments]
-
-Commands:
-
-	new              Create a new session
-	list             List all sessions
-	templates        List all templates
-	editors          List all editors
-	set-editor       Set the default editor
-	delete-template  Delete a template
-	save             Save a session as a template
-	export           Export the current session
-	help             Show this help message
-
-Run '` + cmdName + ` help <command>' for more information on a command.
-`
-
-			fmt.Printf("%s\n", helpMessage)
-			return nil
+func (a *Application) registerCli() {
+	a.CliApp = commands.CliApp{
+		Config: commands.Config{
+			DescriptionMaxWidth: 60,
 		},
-		IsPrivate: false,
-	})
 
+		Name:             commands.MainName(),
+		ShortDescription: "a powerful tool for creating temporary workspaces",
+		Description:      commands.MainName() + " provides a temporary workspace for you to work in, and then destroys it when you are done.",
+
+		// =========================
+		// Commands
+		// =========================
+
+		Commands: []commands.Command{
+			// =========================
+			// lt new [source]
+			// =========================
+			{
+				Name:             commands.CommandNewSession,
+				ShortDescription: "Create a new session",
+				Description:      "Create a new session using the specified source.",
+				Executor:         commands.NewSession,
+				Arguments: []commands.Argument{
+					{
+						Name:        "source",
+						Description: "The source to use for the new session. Can be a git repository URL, a path to a directory, or the name of a letstry template.\n\nIf source is not provided, the session will be created from a blank source.",
+						Optional:    true,
+					},
+				},
+			},
+
+			// =========================
+			// lt list
+			// =========================
+			{
+				Name:             commands.CommandListSessions,
+				ShortDescription: "List running sessions",
+				Description:      "This command will list all currently running sessions.",
+				Executor:         commands.ListSessions,
+			},
+
+			// =========================
+			// lt templates
+			// =========================
+			{
+				Name:             commands.CommandListTemplates,
+				ShortDescription: "List all templates",
+				Description:      "This command will list all available templates that can be used when creating a new session.",
+				Executor:         commands.ListTemplates,
+			},
+
+			// =========================
+			// lt delete-template <name>
+			// =========================
+			{
+				Name:             commands.CommandDeleteTemplate,
+				ShortDescription: "Delete a template",
+				Description:      "Delete a template by name.",
+				Executor:         commands.DeleteTemplate,
+				Arguments: []commands.Argument{
+					{
+						Name:        "name",
+						Description: "The name of the template to delete.",
+						Optional:    false,
+					},
+				},
+			},
+
+			// =========================
+			// lt save <template-name>
+			// =========================
+			{
+				Name:                 commands.CommandSaveTemplate,
+				ShortDescription:     "Saves the current session as a template",
+				Description:          "This command must be run from within a session. It will save the current session as a template with the specified name. If no name is provided, and the session was created from a template, the template's name will be used.",
+				Executor:             commands.SaveTemplate,
+				MustBeRunFromSession: true,
+				Arguments: []commands.Argument{
+					{
+						Name:        "template-name",
+						Description: "The name to use for the template. If not provided, and the session was created from a template, the template's name will be used.",
+						Optional:    true,
+					},
+				},
+			},
+
+			// =========================
+			// lt export <path>
+			// =========================
+			{
+				Name:                 commands.CommandExportSession,
+				ShortDescription:     "Export the current session",
+				Description:          "This command must be run from within a session. It will export the current session to the specified path.",
+				Executor:             commands.ExportSession,
+				MustBeRunFromSession: true,
+				Arguments: []commands.Argument{
+					{
+						Name:        "path",
+						Description: "The path to export the session to.",
+						Optional:    false,
+					},
+				},
+			},
+
+			// =========================
+			// lt editors
+			// =========================
+			{
+				Name:             commands.CommandListEditors,
+				ShortDescription: "Lists all available editors",
+				Description:      "This command will list all available editors that can be used when creating a new session.",
+				Executor:         commands.ListEditors,
+			},
+
+			// =========================
+			// lt set-editor <editor-name>
+			// =========================
+			{
+				Name:             commands.CommandSetEditor,
+				ShortDescription: "Set the default editor",
+				Description:      "This command sets the default editor to use for new sessions. You can run 'lt editors' for a list of available editors.\n\nAdd new editors by editing the configuration file directly.",
+				Executor:         commands.SetEditor,
+				Arguments: []commands.Argument{
+					{
+						Name:        "editor-name",
+						Description: "The name of the editor to use.",
+						Optional:    false,
+					},
+				},
+			},
+
+			// =========================
+			// lt version
+			// =========================
+			{
+				Name:             commands.CommandVersion,
+				ShortDescription: "Display the version of " + commands.MainName(),
+				Description:      "This command will display the version of " + commands.MainName() + ".",
+				Executor:         commands.Version,
+			},
+
+			// =========================
+			// lt monitor <delay> <location>
+			// =========================
+			{
+				Name:             commands.CommandMonitor,
+				ShortDescription: "Monitor a session",
+				Description:      "This command is used to monitor a session. It is not intended to be run directly by the user.",
+				Executor:         commands.Monitor,
+				LogToFile:        true,
+				Arguments: []commands.Argument{
+					{
+						Name:        "delay",
+						Description: "The delay before initiating the monitor, formatted as a duration string. For example, '5s' for 5 seconds.",
+						Optional:    false,
+					},
+					{
+						Name:        "location",
+						Description: "The location to monitor. This should be the path to a letstry session directory.",
+						Optional:    false,
+					},
+				},
+			},
+		},
+	}
+
+	// Register help command
+	a.RegisterHelpCommand()
 }
 
 type ParsedCommand struct {
-	Name      commands.CommandName
-	Execute   commands.Command
-	IsPrivate bool
+	Command   commands.Command
 	Arguments []string
 }
 
 func (a *Application) parseCommand() (*ParsedCommand, error) {
-	// Get argv
+	var err error
+	var command commands.Command
+	var cmdArgs []string = []string{string(commands.CommandHelp)}
+
 	args := os.Args
 
-	var err error
-	var commandName commands.CommandName
-	var command commands.Command
-
-	if len(args) >= 2 {
-		args = args[1:]
-		commandName, err = commands.GetCommandName(args[0])
-		if err != nil {
-			return nil, err
-		}
-
-		if !a.IsCommand(commandName) {
-			return nil, commands.ErrUnknownCommand
-		}
-
-		command = a.commands[commandName]
-	} else {
-		args = []string{"help"}
-		command = a.commands[commands.CommandHelp]
+	if len(args) > 1 {
+		cmdArgs = args[1:]
 	}
 
-	var isPrivate bool
-	for _, privateCommand := range a.privateCommands {
-		if privateCommand == commandName {
-			isPrivate = true
-			break
-		}
+	commandName, err := commands.GetCommandName(cmdArgs[0])
+	if err != nil {
+		return nil, err
+	}
+
+	command, err = a.Command(commandName)
+	if err != nil {
+		return nil, err
 	}
 
 	return &ParsedCommand{
-		Name:      commandName,
-		Execute:   command,
-		Arguments: args[1:],
-		IsPrivate: isPrivate,
+		Command:   command,
+		Arguments: cmdArgs[1:],
 	}, nil
 }
