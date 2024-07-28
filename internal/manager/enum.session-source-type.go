@@ -39,19 +39,18 @@ func (s *manager) GetSessionSourceType(ctx context.Context, value string) (Sessi
 		return SessionSourceTypeBlank, nil
 	}
 
-	// Check if directory exists and is a directory.
-	absPath, err := filepath.Abs(value)
+	// Check for template.
+	_, err := s.GetTemplate(ctx, value)
 	if err == nil {
+		return SessionSourceTypeTemplate, nil
+	}
+
+	// Check if directory exists and is a directory.
+	if absPath, err := filepath.Abs(value); err == nil {
 		stat, err := os.Stat(absPath)
 		if err == nil && stat.IsDir() {
 			return SessionSourceTypeDirectory, nil
 		}
-	}
-
-	// Check for template.
-	_, err = s.GetTemplate(ctx, value)
-	if err == nil {
-		return SessionSourceTypeTemplate, nil
 	}
 
 	// Check for repository.

@@ -54,21 +54,23 @@ func (app CliApp) Command(name CommandName) (Command, error) {
 }
 
 func (app *CliApp) RegisterHelpCommand() {
-	app.Commands = append(app.Commands, GetCommandHelp(*app))
+	app.Commands = append(app.Commands, HelpCommand(*app))
 }
 
 type Argument struct {
 	Name        string
 	Description string
-	Optional    bool
+	Required    bool
 }
 
 func (a Argument) Label() string {
-	label := color.HiWhiteString(a.Name)
-	if a.Optional {
-		label = fmt.Sprintf("%s %s", label, color.HiBlueString("(optional)"))
+	whiteName := color.HiWhiteString(a.Name)
+
+	if !a.Required {
+		return fmt.Sprintf("%s %s", whiteName, color.BlueString("(optional)"))
 	}
-	return label
+
+	return fmt.Sprintf("%s %s", whiteName, color.RedString("(required)"))
 }
 
 type CommandExecutor func(context.Context, []string) error
@@ -106,38 +108,6 @@ func (command Command) Write(app CliApp, out io.Writer) error {
 			Funcs(defaultTemplateFuncs(app)).
 			Parse(commandHelpTemplate),
 	).Execute(out, command)
-}
-
-func GetCommandHelp(app CliApp) Command {
-	return Command{
-		Name: CommandHelp,
-		Executor: func(ctx context.Context, args []string) error {
-			var inputCmd string
-
-			if len(args) > 0 {
-				inputCmd = args[0]
-			}
-
-			if inputCmd != "" {
-				command, err := GetCommandName(inputCmd)
-				if err != nil {
-					return err
-				}
-
-				if !app.IsCommand(command) {
-					return ErrUnknownCommand
-				}
-
-				cmd, err := app.Command(command)
-				if err != nil {
-					return err
-				}
-				return cmd.Write(app, os.Stdout)
-			}
-
-			return app.Write(os.Stdout)
-		},
-	}
 }
 
 func MainName() string {

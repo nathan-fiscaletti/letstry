@@ -12,38 +12,46 @@ import (
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 )
 
-func Version(ctx context.Context, args []string) error {
-	exe, err := os.Executable()
-	if err != nil {
-		return fmt.Errorf("failed to get executable path: %v", err)
+func VersionCommand() Command {
+	return Command{
+		Name:             CommandVersion,
+		ShortDescription: "Display the version of " + MainName(),
+		Description:      "This command will display the version of " + MainName() + ".",
+
+		Executor: func(ctx context.Context, args []string) error {
+			exe, err := os.Executable()
+			if err != nil {
+				return fmt.Errorf("failed to get executable path: %v", err)
+			}
+
+			info, err := buildinfo.ReadFile(exe)
+			if err != nil {
+				return fmt.Errorf("failed to read build info: %v", err)
+			}
+
+			logger, err := logging.LoggerFromContext(ctx)
+			if err != nil {
+				return err
+			}
+
+			logger.Println("module path:", info.Path)
+
+			latestVersion, err := getLatestVersion(info.Path)
+			if err != nil {
+				return fmt.Errorf("failed to get latest version: %v", err)
+			}
+
+			logger.Println("version:", info.Main.Version)
+			if info.Main.Version != latestVersion && info.Main.Version != "(devel)" {
+				logger.Println(color.HiWhiteString("!! new version (" + color.HiGreenString(latestVersion) + ") available"))
+				logger.Println("run 'go get -u", info.Path+"' to update")
+			} else {
+				logger.Println(color.HiWhiteString("you are running the latest version"))
+			}
+
+			return nil
+		},
 	}
-
-	info, err := buildinfo.ReadFile(exe)
-	if err != nil {
-		return fmt.Errorf("failed to read build info: %v", err)
-	}
-
-	logger, err := logging.LoggerFromContext(ctx)
-	if err != nil {
-		return err
-	}
-
-	logger.Println("module path:", info.Path)
-
-	latestVersion, err := getLatestVersion(info.Path)
-	if err != nil {
-		return fmt.Errorf("failed to get latest version: %v", err)
-	}
-
-	logger.Println("version:", info.Main.Version)
-	if info.Main.Version != latestVersion && info.Main.Version != "(devel)" {
-		logger.Println(color.HiWhiteString("!! new version (" + color.HiGreenString(latestVersion) + ") available"))
-		logger.Println("run 'go get -u", info.Path+"' to update")
-	} else {
-		logger.Println(color.HiWhiteString("you are running the latest version"))
-	}
-
-	return nil
 }
 
 // getRootModulePath returns the root module path by removing the subdirectory.
