@@ -39,56 +39,64 @@ func NewApplication(ctx context.Context) *Application {
 	ctx = logging.ContextWithLogger(ctx, logger)
 
 	// Initialize the application.
-	app := &Application{context: ctx}
+	app := &Application{
+		context: ctx,
+		CliApp: commands.CliApp{
+			Config: commands.Config{
+				DescriptionMaxWidth: 60,
+			},
 
-	// Register commands
-	app.registerCli()
+			Name:             commands.MainName(),
+			ShortDescription: "a powerful tool for creating temporary workspaces",
+			Description:      commands.MainName() + " provides a temporary workspace for you to work in, and then destroys it when you are done.",
+
+			// =========================
+			// Commands
+			// =========================
+
+			Commands: []commands.Command{
+				commands.NewSessionCommand(),
+				commands.ListSessionsCommand(),
+				commands.ListTemplatesCommand(),
+				commands.SaveTemplateCommand(),
+				commands.DeleteTemplateCommand(),
+				commands.ExportSessionCommand(),
+				commands.ListEditorsCommand(),
+				commands.SetEditorCommand(),
+				commands.VersionCommand(),
+				commands.MonitorCommand(),
+			},
+		},
+	}
+
+	// Add help command
+	app.RegisterHelpCommand()
 
 	return app
 }
 
 // Start starts the application
-func (a *Application) Start() {
-	logger, err := logging.LoggerFromContext(a.GetContext())
+func (app *Application) Start() {
+	// Parse the command line
+	invocation, err := app.GetInvocation()
 	if err != nil {
 		panic(err)
 	}
 
-	// Parse the command line
-	cmd, err := a.parseCommand()
+	// Configure logging
+	err = invocation.UpdateLogger(app)
 	if err != nil {
-		logger.Printf("Error: %s\n", color.RedString(err.Error()))
-		os.Exit(1)
+		panic(err)
 	}
-
-	// Update the logging based on the command passed.
-	// If it is a private command, write to a file only.
-	if cmd.Command.LogToFile {
-		logger, err = logging.New(&logging.LoggerConfig{
-			LogMode: logging.LogModeFile,
-		})
-		if err != nil {
-			panic(err)
-		}
-
-		a.context = logging.ContextWithLogger(a.GetContext(), logger)
-	}
-
-	// Close the logger when the application closes.
-	defer func() {
-		if logFile := logger.File(); logFile != nil {
-			logFile.Close()
-		}
-	}()
+	defer logging.CloseLog(app.GetContext())
 
 	// Run the command
-	err = cmd.Command.Execute(a.GetContext(), cmd.Arguments)
+	err = invocation.Execute(app)
 	if err != nil {
+		logger, _ := logging.LoggerFromContext(app.GetContext())
 		logger.Printf("Error: %s\n", color.RedString(err.Error()))
 		os.Exit(1)
 	}
-
-	os.Exit(0)
 }
 
 // GetContext returns the application context

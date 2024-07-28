@@ -98,3 +98,15 @@ func LoggerFromContext(ctx context.Context) (*logger, error) {
 
 	return logger, nil
 }
+
+func CloseLog(ctx context.Context) error {
+	logger, err := LoggerFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	if logFile := logger.File(); logFile != nil {
+		return logFile.Close()
+	}
+	return nil
+}
