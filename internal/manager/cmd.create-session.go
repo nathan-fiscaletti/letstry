@@ -130,7 +130,7 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 		logger.Printf("skipping monitor process for session %s (debugger attached)\n", newSession.FormattedID())
 	} else {
 		logger.Printf("starting monitor process for session %s\n", newSession.FormattedID())
-		cmd = exec.Command(os.Args[0], "monitor", fmt.Sprintf("%v", editor.ProcessCaptureDelay), newSession.Location, editor.TrackingType.String())
+		cmd = exec.Command(os.Args[0], "monitor", fmt.Sprintf("%v", editor.ProcessCaptureDelay), newSession.Location, fmt.Sprintf("%v", newSession.PID), editor.TrackingType.String())
 		err = cmd.Start()
 		if err != nil {
 			return zeroValue, fmt.Errorf("failed to start monitor process: %v", err)

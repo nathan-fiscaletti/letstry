@@ -12,8 +12,9 @@ import (
 
 var (
 	ErrMissingArgumentDelay        = errors.New("monitor: missing required argument 'delay'")
+	ErrMissingArgumentLocation     = errors.New("monitor: missing required argument 'location'")
+	ErrMissingArgumentPID          = errors.New("monitor: missing required argument 'pid'")
 	ErrMissingArgumentTrackingType = errors.New("monitor: missing required argument 'tracking-type'")
-	ErrMissingArgumentTrackingData = errors.New("monitor: missing required argument 'tracking-data'")
 )
 
 func MonitorCommand() Command {
@@ -29,8 +30,13 @@ func MonitorCommand() Command {
 				Required:    true,
 			},
 			{
-				Name:        "tracking-data",
-				Description: "The tracking data required for the monitor to run.",
+				Name:        "location",
+				Description: "The location of the session.",
+				Required:    true,
+			},
+			{
+				Name:        "pid",
+				Description: "The process ID to monitor.",
 				Required:    true,
 			},
 			{
@@ -45,10 +51,14 @@ func MonitorCommand() Command {
 			}
 
 			if len(args) < 2 {
-				return ErrMissingArgumentTrackingData
+				return ErrMissingArgumentLocation
 			}
 
 			if len(args) < 3 {
+				return ErrMissingArgumentPID
+			}
+
+			if len(args) < 4 {
 				return ErrMissingArgumentTrackingType
 			}
 
@@ -57,29 +67,20 @@ func MonitorCommand() Command {
 				return err
 			}
 
-			trackingData := args[1]
+			location := args[1]
+			pid, err := strconv.Atoi(args[2])
+			if err != nil {
+				return err
+			}
 
 			mgr, err := manager.GetManager(ctx)
 			if err != nil {
 				return err
 			}
 
-			trackingType, err := editors.GetTrackingType(args[2])
+			trackingType, err := editors.GetTrackingType(args[3])
 			if err != nil {
 				return err
-			}
-
-			var location string
-			var pid int
-
-			switch trackingType {
-			case editors.TrackingTypeFileAccess:
-				location = trackingData
-			case editors.TrackingTypeProcess:
-				pid, err = strconv.Atoi(trackingData)
-				if err != nil {
-					return err
-				}
 			}
 
 			return mgr.MonitorSession(ctx, manager.MonitorSessionArguments{
