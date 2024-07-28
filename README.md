@@ -97,9 +97,11 @@ The config file allows you to specify different editors if you do not use VSCode
     "editors": [
         {
             "name": "vscode",
-            "path": "C:\\Users\\yourname\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
+            "run_type": "run",
+            "path": "C:\\Users\\natef\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe",
             "args": "-n",
-            "process_capture_delay": 2000000000
+            "process_capture_delay": 2000000000,
+            "tracking_type": "file_access"
         }
     ]
 }
