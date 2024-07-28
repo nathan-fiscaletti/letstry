@@ -3,15 +3,17 @@ package commands
 import (
 	"context"
 	"errors"
-	"os"
+	"strconv"
 	"time"
 
+	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
 var (
-	ErrMissingArgumentDelay    = errors.New("monitor: missing required argument 'delay'")
-	ErrMissingArgumentLocation = errors.New("monitor: missing required argument 'location'")
+	ErrMissingArgumentDelay        = errors.New("monitor: missing required argument 'delay'")
+	ErrMissingArgumentTrackingType = errors.New("monitor: missing required argument 'tracking-type'")
+	ErrMissingArgumentTrackingData = errors.New("monitor: missing required argument 'tracking-data'")
 )
 
 func MonitorCommand() Command {
@@ -27,8 +29,13 @@ func MonitorCommand() Command {
 				Required:    true,
 			},
 			{
-				Name:        "location",
-				Description: "The location to monitor. This should be the path to a letstry session directory.",
+				Name:        "tracking-data",
+				Description: "The tracking data required for the monitor to run.",
+				Required:    true,
+			},
+			{
+				Name:        "tracking-type",
+				Description: "The type of tracking data required for the monitor to run. Can be one of the following: 'file_access', 'process'.",
 				Required:    true,
 			},
 		},
@@ -38,7 +45,11 @@ func MonitorCommand() Command {
 			}
 
 			if len(args) < 2 {
-				return ErrMissingArgumentLocation
+				return ErrMissingArgumentTrackingData
+			}
+
+			if len(args) < 3 {
+				return ErrMissingArgumentTrackingType
 			}
 
 			delay, err := time.ParseDuration(args[0])
@@ -46,21 +57,36 @@ func MonitorCommand() Command {
 				return err
 			}
 
-			location := args[1]
-
-			_, err = os.Stat(location)
-			if err != nil {
-				return err
-			}
+			trackingData := args[1]
 
 			mgr, err := manager.GetManager(ctx)
 			if err != nil {
 				return err
 			}
 
+			trackingType, err := editors.GetTrackingType(args[2])
+			if err != nil {
+				return err
+			}
+
+			var location string
+			var pid int
+
+			switch trackingType {
+			case editors.TrackingTypeFileAccess:
+				location = trackingData
+			case editors.TrackingTypeProcess:
+				pid, err = strconv.Atoi(trackingData)
+				if err != nil {
+					return err
+				}
+			}
+
 			return mgr.MonitorSession(ctx, manager.MonitorSessionArguments{
-				Delay:    delay,
-				Location: location,
+				Delay:        delay,
+				TrackingType: trackingType,
+				PID:          pid,
+				Location:     location,
 			})
 		},
 	}

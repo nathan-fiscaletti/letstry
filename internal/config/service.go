@@ -4,11 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/user"
-	"path/filepath"
-	"runtime"
-	"time"
 
+	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
 	"github.com/nathan-fiscaletti/letstry/internal/storage"
 )
 
@@ -68,32 +65,10 @@ func SaveConfig(cfg *Config) error {
 }
 
 func getDefaultConfig() *Config {
-	currentUser, err := user.Current()
-	if err != nil {
-		panic(fmt.Errorf("failed to get current user: %v", err))
-	}
-
-	var vsCodePath string
-	switch os := runtime.GOOS; os {
-	case "darwin":
-		vsCodePath = filepath.Join("Applications", "Visual Studio Code.app", "Contents", "Resources", "app", "bin", "code")
-	case "linux":
-		vsCodePath = filepath.Join(currentUser.HomeDir, "bin", "code")
-	case "windows":
-		vsCodePath = filepath.Join(currentUser.HomeDir, "AppData", "Local", "Programs", "Microsoft VS Code", "Code.exe")
-	}
-
-	editors := []Editor{
-		{
-			Name:                "vscode",
-			ExecPath:            vsCodePath,
-			Args:                "-n",
-			ProcessCaptureDelay: time.Second * 2,
-		},
-	}
+	defaultEditor := editors.DefaultEditors()
 
 	return &Config{
-		DefaultEditorName: "vscode",
-		AvailableEditors:  editors,
+		DefaultEditorName: defaultEditor[0].Name,
+		AvailableEditors:  editors.DefaultEditors(),
 	}
 }

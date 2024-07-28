@@ -4,9 +4,10 @@ import (
 	"context"
 
 	"github.com/nathan-fiscaletti/letstry/internal/config"
+	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
 )
 
-func (s *manager) ListEditors(ctx context.Context) ([]config.Editor, error) {
+func (s *manager) ListEditors(ctx context.Context) ([]editors.Editor, error) {
 	cfg, err := config.GetConfig()
 	if err != nil {
 		return nil, err
