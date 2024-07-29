@@ -5,6 +5,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
+	"github.com/nathan-fiscaletti/letstry/internal/util/access"
 	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
 )
 
@@ -39,7 +40,7 @@ func (s sessionSource) FormattedString() string {
 	return colorWrapper("%s", s.String())
 }
 
-type session struct {
+type Session struct {
 	ID       identifier.ID  `json:"id"`
 	Location string         `json:"location"`
 	PID      int            `json:"pid"`
@@ -47,7 +48,11 @@ type session struct {
 	Editor   editors.Editor `json:"editor"`
 }
 
-func (s *session) String() string {
+func (s *Session) IsActive() bool {
+	return access.IsPathUse(s.Location)
+}
+
+func (s *Session) String() string {
 	src := s.Source.FormattedString()
 	id := s.FormattedID()
 	editor := color.BlueString("(%s)", s.Editor.Name)
@@ -55,6 +60,6 @@ func (s *session) String() string {
 	return fmt.Sprintf("id=%s, editor=%s, src=%s", id, editor, src)
 }
 
-func (s *session) FormattedID() string {
+func (s *Session) FormattedID() string {
 	return color.HiGreenString(s.ID.String())
 }

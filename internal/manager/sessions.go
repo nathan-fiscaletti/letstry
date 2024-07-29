@@ -14,10 +14,10 @@ var (
 )
 
 // GetSession returns the session with the given ID
-func (s *manager) GetSession(ctx context.Context, id identifier.ID) (session, error) {
+func (s *manager) GetSession(ctx context.Context, id identifier.ID) (Session, error) {
 	sessions, err := s.ListSessions(ctx)
 	if err != nil {
-		return session{}, err
+		return Session{}, err
 	}
 
 	for _, session := range sessions {
@@ -26,14 +26,14 @@ func (s *manager) GetSession(ctx context.Context, id identifier.ID) (session, er
 		}
 	}
 
-	return session{}, fmt.Errorf("session with ID %s not found", id)
+	return Session{}, fmt.Errorf("session with ID %s not found", id)
 }
 
 // GetCurrentSession returns the session for the current working directory
-func (s *manager) GetCurrentSession(ctx context.Context) (session, error) {
+func (s *manager) GetCurrentSession(ctx context.Context) (Session, error) {
 	cwd, err := os.Getwd()
 	if err != nil {
-		return session{}, fmt.Errorf("failed to get current working directory: %v", err)
+		return Session{}, fmt.Errorf("failed to get current working directory: %v", err)
 	}
 
 	sess, err := s.GetSessionForPath(ctx, cwd)
@@ -45,18 +45,18 @@ func (s *manager) GetCurrentSession(ctx context.Context) (session, error) {
 }
 
 // GetSessionForPath returns the session for the given path
-func (s *manager) GetSessionForPath(ctx context.Context, path string) (session, error) {
-	return s.GetSessionForPredicate(ctx, func(sess session) bool {
+func (s *manager) GetSessionForPath(ctx context.Context, path string) (Session, error) {
+	return s.GetSessionForPredicate(ctx, func(sess Session) bool {
 		return sess.Location == path
 	})
 }
 
 // GetSessionForPredicate returns the session that matches the given predicate
-func (s *manager) GetSessionForPredicate(ctx context.Context, predicate func(session) bool) (session, error) {
+func (s *manager) GetSessionForPredicate(ctx context.Context, predicate func(Session) bool) (Session, error) {
 	// get the list of sessions
 	sessions, err := s.ListSessions(ctx)
 	if err != nil {
-		return session{}, err
+		return Session{}, err
 	}
 
 	// find the session with the same location
@@ -66,5 +66,5 @@ func (s *manager) GetSessionForPredicate(ctx context.Context, predicate func(ses
 		}
 	}
 
-	return session{}, ErrSessionNotFound
+	return Session{}, ErrSessionNotFound
 }

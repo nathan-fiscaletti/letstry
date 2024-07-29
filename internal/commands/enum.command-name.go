@@ -19,6 +19,8 @@ const (
 	CommandHelp           CommandName = "help"
 	CommandVersion        CommandName = "version"
 	CommandMonitor        CommandName = "monitor"
+	CommandClean          CommandName = "clean"
+	CommandCleanAll       CommandName = "clean-all"
 	CommandNewSession     CommandName = "new"
 	CommandListSessions   CommandName = "list"
 	CommandListTemplates  CommandName = "templates"
@@ -34,6 +36,8 @@ var allCommands = []CommandName{
 	CommandHelp,
 	CommandVersion,
 	CommandMonitor,
+	CommandClean,
+	CommandCleanAll,
 	CommandNewSession,
 	CommandListSessions,
 	CommandListTemplates,

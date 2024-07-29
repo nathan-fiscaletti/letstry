@@ -60,6 +60,8 @@ func NewApplication(ctx context.Context) *Application {
 
 			Commands: []commands.Command{
 				commands.NewSessionCommand(),
+				commands.CleanCommand(),
+				commands.CleanAllCommand(),
 				commands.ListSessionsCommand(),
 				commands.ListTemplatesCommand(),
 				commands.SaveTemplateCommand(),
