@@ -22,8 +22,8 @@ type CreateSessionArguments struct {
 	Source string `json:"source"`
 }
 
-func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments) (session, error) {
-	var zeroValue session
+func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments) (Session, error) {
+	var zeroValue Session
 
 	sourceType, err := s.GetSessionSourceType(ctx, args.Source)
 	if err != nil {
@@ -109,7 +109,7 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 	}
 
 	// Create the session
-	newSession := session{
+	newSession := Session{
 		ID:       identifier.NewID(),
 		Location: tempDir,
 		PID:      cmd.Process.Pid,
@@ -158,7 +158,7 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 	return newSession, nil
 }
 
-func (s *manager) addSession(ctx context.Context, sess session) error {
+func (s *manager) addSession(ctx context.Context, sess Session) error {
 	sessions, err := s.ListSessions(ctx)
 	if err != nil {
 		return err

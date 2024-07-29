@@ -6,8 +6,8 @@ import (
 	"fmt"
 )
 
-func (s *manager) ListSessions(ctx context.Context) ([]session, error) {
-	var sessions []session = make([]session, 0)
+func (s *manager) ListSessions(ctx context.Context) ([]Session, error) {
+	var sessions []Session = make([]Session, 0)
 
 	var defaultSessions []byte
 	defaultSessions, err := json.MarshalIndent(sessions, "", "    ")
