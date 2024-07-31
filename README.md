@@ -1,6 +1,10 @@
 # letstry
 
+[![Sponsor Me!](https://img.shields.io/badge/%F0%9F%92%B8-Sponsor%20Me!-blue)](https://github.com/sponsors/nathan-fiscaletti)
+
 letstry is a powerful tool designed to provide temporary work-spaces for developers, built in Golang. It allows you to quickly create new projects, save them as templates, and export them to a more permanent location.
+
+[![Preview](./preview.png)](https://youtu.be/H0vJcw_KfTc)
 
 ## Installation
 
