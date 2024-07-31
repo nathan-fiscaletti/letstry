@@ -29,20 +29,29 @@ type MonitorSessionArguments struct {
 
 func (s *manager) MonitorSession(ctx context.Context, args MonitorSessionArguments) error {
 	// delay the start of the monitoring
+	logger, err := logging.LoggerFromContext(ctx)
+	if err != nil {
+		return err
+	}
+
+	logger.Printf("delaying monitoring for %v\n", args.Delay)
 	time.Sleep(args.Delay)
 
+	session, err := s.GetSessionForPath(ctx, args.Location)
+	if err != nil {
+		return err
+	}
+	logger.Printf("monitoring session: %s\n", session.ID)
+
+	logger = logger.ChildLogger(fmt.Sprintf("sess-%s", session.ID))
+
 	handler := func() error {
-		session, err := s.GetSessionForPath(ctx, args.Location)
-		if err != nil {
-			return err
+		switch session.Editor.TrackingType {
+		case editors.TrackingTypeFileAccess:
+			logger.Printf("cleaning up session: %s (directory no longer being accessed)\n", session.ID)
+		case editors.TrackingTypeProcess:
+			logger.Printf("cleaning up session: %s (process no longer running)\n", session.ID)
 		}
-
-		logger, err := logging.LoggerFromContext(ctx)
-		if err != nil {
-			return err
-		}
-
-		logger.Printf("cleaning up session: %s (directory no longer being accessed)\n", session.ID)
 
 		err = s.removeSession(ctx, session.ID)
 		if err != nil {
@@ -54,8 +63,10 @@ func (s *manager) MonitorSession(ctx context.Context, args MonitorSessionArgumen
 
 	switch args.TrackingType {
 	case editors.TrackingTypeProcess:
+		logger.Printf("using tracking type: %v\n", editors.TrackingTypeProcess)
 		return s.monitorProcess(args.PID, handler)
 	case editors.TrackingTypeFileAccess:
+		logger.Printf("using tracking type: %v\n", editors.TrackingTypeFileAccess)
 		_, err := os.Stat(args.Location)
 		if err != nil {
 			return err

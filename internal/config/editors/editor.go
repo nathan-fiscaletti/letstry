@@ -31,17 +31,6 @@ var AllTrackingTypes = []TrackingType{
 	TrackingTypeProcess,
 }
 
-type EditorRunType string
-
-func (e EditorRunType) String() string {
-	return string(e)
-}
-
-const (
-	EditorRunTypeStart EditorRunType = "start"
-	EditorRunTypeRun   EditorRunType = "run"
-)
-
 func GetTrackingType(value string) (TrackingType, error) {
 	for _, t := range AllTrackingTypes {
 		if t.String() == value {
@@ -54,7 +43,6 @@ func GetTrackingType(value string) (TrackingType, error) {
 
 type Editor struct {
 	Name                EditorName    `json:"name"`
-	RunType             EditorRunType `json:"run_type"`
 	ExecPath            string        `json:"path"`
 	Args                string        `json:"args"`
 	ProcessCaptureDelay time.Duration `json:"process_capture_delay"`
