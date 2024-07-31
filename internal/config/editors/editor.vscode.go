@@ -30,10 +30,9 @@ func VSCodeEditor() Editor {
 
 	return Editor{
 		Name:                EditorNameVSCode,
-		RunType:             EditorRunTypeRun,
 		ExecPath:            vsCodePath,
 		Args:                "-n",
-		ProcessCaptureDelay: time.Second * 2,
+		ProcessCaptureDelay: time.Second * 5,
 		TrackingType:        TrackingTypeFileAccess,
 	}
 }

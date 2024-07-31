@@ -53,6 +53,13 @@ func (l *logger) File() *os.File {
 	return nil
 }
 
+func (l *logger) ChildLogger(prefix string) *logger {
+	return &logger{
+		Logger: log.New(l.Writer(), fmt.Sprintf("%s%s: ", logPrefix, prefix), log.LstdFlags),
+		cfg:    l.cfg,
+	}
+}
+
 func New(cfg *LoggerConfig) (*logger, error) {
 	storageManager := storage.GetStorage()
 

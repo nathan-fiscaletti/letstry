@@ -11,7 +11,6 @@ import (
 
 	"github.com/go-git/go-git/v5"
 	"github.com/nathan-fiscaletti/letstry/internal/config"
-	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
 	"github.com/nathan-fiscaletti/letstry/internal/environment"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
@@ -98,12 +97,7 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 	cfgArgs := strings.Split(editor.Args, " ")
 	cmdArgs := append(cfgArgs, tempDir)
 	cmd := exec.Command(editor.ExecPath, cmdArgs...)
-	switch editor.RunType {
-	case editors.EditorRunTypeRun:
-		err = cmd.Run()
-	case editors.EditorRunTypeStart:
-		err = cmd.Start()
-	}
+	err = cmd.Start()
 	if err != nil {
 		return zeroValue, fmt.Errorf("failed to run editor: %v", err)
 	}
@@ -132,7 +126,7 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 
 	if appEnvironment.DebuggerAttached {
 		logger.Printf("skipping monitor process for session %s (debugger attached)\n", newSession.FormattedID())
-		logger.Printf("starting monitor session for session %s\n", newSession.FormattedID())
+		logger.Printf("starting monitor session for session %s with delay %v\n", newSession.FormattedID(), newSession.Editor.ProcessCaptureDelay)
 		err = s.MonitorSession(ctx, MonitorSessionArguments{
 			Delay:        newSession.Editor.ProcessCaptureDelay,
 			TrackingType: newSession.Editor.TrackingType,
@@ -145,7 +139,7 @@ func (s *manager) CreateSession(ctx context.Context, args CreateSessionArguments
 	} else {
 		// Call this application again, but start it in the background as it's own process.
 		// This will allow the user to continue using the current terminal session.
-		logger.Printf("starting monitor process for session %s\n", newSession.FormattedID())
+		logger.Printf("starting monitor session for session %s with delay %v\n", newSession.FormattedID(), newSession.Editor.ProcessCaptureDelay)
 		cmd = exec.Command(os.Args[0], "monitor", fmt.Sprintf("%v", editor.ProcessCaptureDelay), newSession.Location, fmt.Sprintf("%v", newSession.PID), editor.TrackingType.String())
 		err = cmd.Start()
 		if err != nil {
