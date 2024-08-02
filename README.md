@@ -8,7 +8,9 @@ letstry is a powerful tool designed to provide temporary work-spaces for develop
 
 ## Installation
 
-To install letstry, run the following command:
+Letstry requires Go to be installed on your system. If you do not have Go installed, you can download it from the [official website](https://golang.org/dl/).
+
+Once Go is installed, to install letstry, run the following command:
 
 ```sh
 $ go install github.com/nathan-fiscaletti/letstry/cmd/letstry@latest
@@ -122,6 +124,20 @@ The config file allows you to specify different editors if you do not use VSCode
 ## Contributing
 
 We welcome contributions to improve letstry. If you have suggestions or bug reports, please open an issue or submit a pull request.
+
+## Development
+
+To install letstry for development, run the following command from the root of the project:
+
+```sh
+$ go install ./...
+```
+
+**Attaching a Debugger in VSCode**
+
+To attach a debugger in VSCode you will first need to configure the command line arguments with which you wish the application to be launched. You can do this in the [./vscode/launch.json](./vscode/launch.json) file.
+
+Then open the Run and Debug tab in VSCode (Ctrl+Shift+D on Windows) and select the `Launch Go Program` configuration.
 
 ## License
 
