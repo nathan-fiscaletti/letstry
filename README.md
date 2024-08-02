@@ -70,6 +70,14 @@ $ lt save [name]
 
 If the session was initially created from an existing template, you can omit the name argument and the original template will be updated with the new session.
 
+**Importing a Template**
+
+You can easily import git repositories as templates using the `lt import` command.
+
+```sh
+$ lt import <template-name> <repository-url>
+```
+
 **Listing Templates**
 
 To list all available templates, use the `lt templates` command.
