@@ -1,16 +1,18 @@
-package commands
+package editors
 
 import (
 	"context"
 
 	"github.com/fatih/color"
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
-func ListEditorsCommand() Command {
-	return Command{
-		Name:             CommandListEditors,
+func ListEditorsCommand() cli.Command {
+	return cli.Command{
+		Name:             commands.CommandListEditors.String(),
 		ShortDescription: "Lists all available editors",
 		Description:      "This command will list all available editors that can be used when creating a new session.",
 		Executor: func(ctx context.Context, args []string) error {

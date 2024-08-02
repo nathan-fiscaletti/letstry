@@ -1,9 +1,11 @@
-package commands
+package templates
 
 import (
 	"context"
 	"errors"
 
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
@@ -11,12 +13,12 @@ var (
 	ErrMissingTemplateName = errors.New("missing template name")
 )
 
-func DeleteTemplateCommand() Command {
-	return Command{
-		Name:             CommandDeleteTemplate,
+func DeleteTemplateCommand() cli.Command {
+	return cli.Command{
+		Name:             commands.CommandDeleteTemplate.String(),
 		ShortDescription: "Delete a template",
 		Description:      "Delete a template by name.",
-		Arguments: []Argument{
+		Arguments: []cli.Argument{
 			{
 				Name:        "name",
 				Description: "The name of the template to delete.",

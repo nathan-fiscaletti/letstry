@@ -7,7 +7,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}/cmd/letstry/main.go",
-            "args": ["new", "go"],
+            "args": ["help"],
             "env": {
                 "DEBUGGER_ATTACHED": "true"
             },

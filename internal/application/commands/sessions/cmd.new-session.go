@@ -1,18 +1,20 @@
-package commands
+package sessions
 
 import (
 	"context"
 
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
 // NewSessionCommand returns a new command for creating a new session.
-func NewSessionCommand() Command {
-	return Command{
-		Name:             CommandNewSession,
+func NewSessionCommand() cli.Command {
+	return cli.Command{
+		Name:             commands.CommandNewSession.String(),
 		ShortDescription: "Create a new session",
 		Description:      "Create a new session using the specified source.",
-		Arguments: []Argument{
+		Arguments: []cli.Argument{
 			{
 				Name:        "source",
 				Description: "The source to use for the new session. Can be a git repository URL, a path to a directory, or the name of a letstry template.\n\nIf source is not provided, the session will be created from a blank source.",

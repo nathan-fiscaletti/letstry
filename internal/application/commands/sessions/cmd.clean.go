@@ -1,10 +1,12 @@
-package commands
+package sessions
 
 import (
 	"context"
 
 	"errors"
 
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
 )
@@ -13,12 +15,12 @@ var (
 	ErrMissingSessionID = errors.New("missing session id")
 )
 
-func CleanCommand() Command {
-	return Command{
-		Name:             CommandClean,
+func CleanCommand() cli.Command {
+	return cli.Command{
+		Name:             commands.CommandClean.String(),
 		ShortDescription: "Remove a dangling session",
 		Description:      "This command removes all files for the specified session. This command is useful for cleaning up a session that was not properly closed.",
-		Arguments: []Argument{
+		Arguments: []cli.Argument{
 			{
 				Name:        "session-id",
 				Description: "The session to remove files for.",

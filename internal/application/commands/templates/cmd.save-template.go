@@ -1,18 +1,20 @@
-package commands
+package templates
 
 import (
 	"context"
 
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
-func SaveTemplateCommand() Command {
-	return Command{
-		Name:                 CommandSaveTemplate,
+func SaveTemplateCommand() cli.Command {
+	return cli.Command{
+		Name:                 commands.CommandSaveTemplate.String(),
 		ShortDescription:     "Saves the current session as a template",
 		Description:          "This command must be run from within a session. It will save the current session as a template with the specified name. If no name is provided, and the session was created from a template, the template's name will be used.",
 		MustBeRunFromSession: true,
-		Arguments: []Argument{
+		Arguments: []cli.Argument{
 			{
 				Name:        "template-name",
 				Description: "The name to use for the template. If not provided, and the session was created from a template, the template's name will be used.",

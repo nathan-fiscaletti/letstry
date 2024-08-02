@@ -1,4 +1,4 @@
-package commands
+package general
 
 import (
 	"context"
@@ -9,15 +9,17 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 )
 
-func VersionCommand() Command {
-	return Command{
-		Name:             CommandVersion,
-		ShortDescription: "Display the version of " + MainName(),
-		Description:      "This command will display the version of " + MainName() + ".",
-
+func VersionCommand() cli.Command {
+	return cli.Command{
+		Name:             commands.CommandVersion.String(),
+		Aliases:          []string{"-v", "--version"},
+		ShortDescription: "Display the version of " + cli.MainName(),
+		Description:      "This command will display the version of " + cli.MainName() + ".",
 		Executor: func(ctx context.Context, args []string) error {
 			exe, err := os.Executable()
 			if err != nil {

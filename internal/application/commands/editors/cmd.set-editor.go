@@ -1,9 +1,11 @@
-package commands
+package editors
 
 import (
 	"context"
 	"errors"
 
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
@@ -11,12 +13,12 @@ var (
 	ErrMissingEditorName = errors.New("missing editor name")
 )
 
-func SetEditorCommand() Command {
-	return Command{
-		Name:             CommandSetEditor,
+func SetEditorCommand() cli.Command {
+	return cli.Command{
+		Name:             commands.CommandSetEditor.String(),
 		ShortDescription: "Set the default editor",
 		Description:      "This command sets the default editor to use for new sessions. You can run 'lt editors' for a list of available editors.\n\nAdd new editors by editing the configuration file directly.",
-		Arguments: []Argument{
+		Arguments: []cli.Argument{
 			{
 				Name:        "editor-name",
 				Description: "The name of the editor to use.",

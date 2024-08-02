@@ -1,4 +1,4 @@
-package commands
+package cli
 
 var applicationHelpTemplate string = `
 {{.Name}}: {{.ShortDescription}}
@@ -13,11 +13,11 @@ Usage
     {{.Name}} <command> [arguments]
 
 Commands
-{{$longestLen := longestStringLength .Commands -}}
-{{range .Commands}}
+{{$commands := commands -}}
+{{$longestLen := longestStringLength $commands -}}
+{{range $commands}}
     {{$padded := padEnd .Name $longestLen -}}
     {{white $padded}}  {{.ShortDescription}}{{end}}
-{{$paddedHelp := padEnd "help" $longestLen}}    {{white $paddedHelp}}  Display this help message
 
 Run '{{.Name}} help <command>' for more information on a command.
 
