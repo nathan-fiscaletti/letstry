@@ -8,7 +8,9 @@ letstry is a powerful tool designed to provide temporary work-spaces for develop
 
 ## Installation
 
-To install letstry, run the following command:
+Letstry requires Go to be installed on your system. If you do not have Go installed, you can download it from the [official website](https://golang.org/dl/).
+
+Once Go is installed, to install letstry, run the following command:
 
 ```sh
 $ go install github.com/nathan-fiscaletti/letstry/cmd/letstry@latest
