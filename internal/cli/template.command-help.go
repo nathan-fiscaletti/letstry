@@ -1,4 +1,4 @@
-package commands
+package cli
 
 var commandHelpTemplate string = `
 {{getCallerName}}: {{whiteCommand .Name}} — {{.ShortDescription}}

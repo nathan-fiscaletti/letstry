@@ -1,4 +1,4 @@
-package commands
+package hidden
 
 import (
 	"context"
@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
@@ -17,13 +19,13 @@ var (
 	ErrMissingArgumentTrackingType = errors.New("monitor: missing required argument 'tracking-type'")
 )
 
-func MonitorCommand() Command {
-	return Command{
-		Name:             CommandMonitor,
+func MonitorCommand() cli.Command {
+	return cli.Command{
+		Name:             commands.CommandMonitor.String(),
 		ShortDescription: "Monitor a session",
 		Description:      "This command is used to monitor a session. It is not intended to be run directly by the user.",
 		LogToFile:        true,
-		Arguments: []Argument{
+		Arguments: []cli.Argument{
 			{
 				Name:        "delay",
 				Description: "The delay before initiating the monitor, formatted as a duration string. For example, '5s' for 5 seconds.",

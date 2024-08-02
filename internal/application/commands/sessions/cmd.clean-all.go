@@ -1,15 +1,17 @@
-package commands
+package sessions
 
 import (
 	"context"
 
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
-func CleanAllCommand() Command {
-	return Command{
-		Name:             CommandCleanAll,
+func CleanAllCommand() cli.Command {
+	return cli.Command{
+		Name:             commands.CommandCleanAll.String(),
 		ShortDescription: "Clean any dangling sessions",
 		Description:      "This command will clean any dangling sessions that are no longer in use. This command is useful for cleaning up any sessions that were not properly closed.",
 		Executor: func(ctx context.Context, args []string) error {
@@ -36,7 +38,7 @@ func CleanAllCommand() Command {
 			}
 
 			if len(inactiveSessions) < 1 {
-				logger.Printf("%s: no inactive sessions to clean\n", CommandCleanAll)
+				logger.Printf("%s: no inactive sessions to clean\n", commands.CommandCleanAll)
 				return nil
 			}
 

@@ -1,15 +1,17 @@
-package commands
+package templates
 
 import (
 	"context"
 
+	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
 )
 
-func ListTemplatesCommand() Command {
-	return Command{
-		Name:             CommandListTemplates,
+func ListTemplatesCommand() cli.Command {
+	return cli.Command{
+		Name:             commands.CommandListTemplates.String(),
 		ShortDescription: "List all templates",
 		Description:      "This command will list all available templates that can be used when creating a new session.",
 		Executor: func(ctx context.Context, args []string) error {

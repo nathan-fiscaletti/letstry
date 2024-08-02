@@ -7,7 +7,13 @@ import (
 
 	"github.com/fatih/color"
 
-	"github.com/nathan-fiscaletti/letstry/internal/commands"
+	editor_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/editors"
+	general_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/general"
+	hidden_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/hidden"
+	session_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/sessions"
+	template_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/templates"
+
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/environment"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 	"github.com/nathan-fiscaletti/letstry/internal/manager"
@@ -18,7 +24,7 @@ var (
 )
 
 type Application struct {
-	commands.CliApp
+	cli.CliApp
 
 	context context.Context
 }
@@ -42,38 +48,44 @@ func NewApplication(ctx context.Context) *Application {
 	// Initialize logging
 	ctx = logging.ContextWithLogger(ctx, logger)
 
+	var commands = []cli.Command{
+		session_commands.NewSessionCommand(),
+		session_commands.ListSessionsCommand(),
+		session_commands.ExportSessionCommand(),
+		session_commands.CleanCommand(),
+		session_commands.CleanAllCommand(),
+
+		template_commands.ListTemplatesCommand(),
+		template_commands.SaveTemplateCommand(),
+		template_commands.ImportTemplate(),
+		template_commands.DeleteTemplateCommand(),
+
+		editor_commands.ListEditorsCommand(),
+		editor_commands.SetEditorCommand(),
+		editor_commands.GetEditorCommand(),
+
+		hidden_commands.MonitorCommand(),
+		general_commands.VersionCommand(),
+	}
+
 	// Initialize the application.
 	app := &Application{
 		context: ctx,
-		CliApp: commands.CliApp{
-			Config: commands.Config{
+		CliApp: cli.CliApp{
+			Config: cli.CliAppConfig{
 				DescriptionMaxWidth: 60,
+				HelpCommandSorter:   cli.CommandSorterOrderedAs(commands),
 			},
 
-			Name:             commands.MainName(),
+			Name:             cli.MainName(),
 			ShortDescription: "a powerful tool for creating temporary workspaces",
-			Description:      commands.MainName() + " provides a temporary workspace for you to work in, and then destroys it when you are done.",
-
-			// =========================
-			// Commands
-			// =========================
-
-			Commands: []commands.Command{
-				commands.NewSessionCommand(),
-				commands.ListSessionsCommand(),
-				commands.ExportSessionCommand(),
-				commands.ListTemplatesCommand(),
-				commands.SaveTemplateCommand(),
-				commands.DeleteTemplateCommand(),
-				commands.ListEditorsCommand(),
-				commands.SetEditorCommand(),
-				commands.GetEditorCommand(),
-				commands.CleanCommand(),
-				commands.CleanAllCommand(),
-				commands.MonitorCommand(),
-				commands.VersionCommand(),
-			},
+			Description:      cli.MainName() + " provides a temporary workspace for you to work in, and then destroys it when you are done.",
 		},
+	}
+
+	// Add commands
+	for _, command := range commands {
+		app.RegisterCommand(command)
 	}
 
 	// Add help command

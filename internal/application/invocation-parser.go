@@ -3,12 +3,12 @@ package application
 import (
 	"os"
 
-	"github.com/nathan-fiscaletti/letstry/internal/commands"
+	"github.com/nathan-fiscaletti/letstry/internal/cli"
 	"github.com/nathan-fiscaletti/letstry/internal/logging"
 )
 
 type ApplicationInvocation struct {
-	Command   commands.Command
+	Command   cli.Command
 	Arguments []string
 }
 
@@ -33,8 +33,8 @@ func (i ApplicationInvocation) UpdateLogger(app *Application) error {
 
 func (a *Application) GetInvocation() (*ApplicationInvocation, error) {
 	var err error
-	var command commands.Command
-	var cmdArgs []string = []string{string(commands.CommandHelp)}
+	var command cli.Command
+	var cmdArgs []string = []string{string(cli.HelpCommandName)}
 
 	args := os.Args
 
@@ -42,12 +42,7 @@ func (a *Application) GetInvocation() (*ApplicationInvocation, error) {
 		cmdArgs = args[1:]
 	}
 
-	commandName, err := commands.GetCommandName(cmdArgs[0])
-	if err != nil {
-		return nil, err
-	}
-
-	command, err = a.Command(commandName)
+	command, err = a.Command(cmdArgs[0])
 	if err != nil {
 		return nil, err
 	}
