@@ -135,7 +135,7 @@ $ go install ./...
 
 **Attaching a Debugger in VSCode**
 
-To attach a debugger in VSCode you will first need to configure the command line arguments with which you wish the application to be launched. You can do this in the [./vscode/launch.json](./vscode/launch.json) file.
+To attach a debugger in VSCode you will first need to configure the command line arguments with which you wish the application to be launched. You can do this in the [./.vscode/launch.json](./.vscode/launch.json) file.
 
 Then open the Run and Debug tab in VSCode (Ctrl+Shift+D on Windows) and select the `Launch Go Program` configuration.
 
