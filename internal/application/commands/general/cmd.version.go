@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"os"
 	"runtime"
-	"strings"
 
 	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
 	"github.com/nathan-fiscaletti/letstry/internal/cli"
@@ -34,13 +33,4 @@ func VersionCommand() cli.Command {
 			return nil
 		},
 	}
-}
-
-// getRootModulePath returns the root module path by removing the subdirectory.
-func getRootModulePath(modulePath string) string {
-	parts := strings.Split(modulePath, "/")
-	if len(parts) > 3 {
-		return strings.Join(parts[:3], "/")
-	}
-	return modulePath
 }
