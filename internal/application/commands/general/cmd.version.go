@@ -28,7 +28,7 @@ func VersionCommand() cli.Command {
 				return fmt.Errorf("failed to read build info: %v", err)
 			}
 
-			fmt.Println(cli.MainName(), "version", info.Main.Version, runtime.GOARCH)
+			fmt.Println(cli.MainName(), "version", info.Main.Version, fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH))
 
 			return nil
 		},
