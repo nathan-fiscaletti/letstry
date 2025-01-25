@@ -1,5 +1,3 @@
-https://github.com/user-attachments/assets/a69fc7b1-34f1-4624-adf2-075e6cdb30d3
-
 # letstry
 
 [![Sponsor Me!](https://img.shields.io/badge/%F0%9F%92%B8-Sponsor%20Me!-blue)](https://github.com/sponsors/nathan-fiscaletti)
