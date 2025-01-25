@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/nathan-fiscaletti/letstry/internal/storage"
+	"github.com/letstrygo/letstry/internal/storage"
 )
 
 var (

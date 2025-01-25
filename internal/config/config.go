@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 
-	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
+	"github.com/letstrygo/letstry/internal/config/editors"
 )
 
 type Config struct {

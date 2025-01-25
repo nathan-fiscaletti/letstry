@@ -3,7 +3,7 @@ package manager
 import (
 	"context"
 
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/logging"
 )
 
 func (s *manager) DeleteTemplate(ctx context.Context, t Template) error {

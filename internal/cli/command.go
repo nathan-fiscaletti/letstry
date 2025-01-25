@@ -6,7 +6,7 @@ import (
 	"io"
 	"text/template"
 
-	"github.com/nathan-fiscaletti/letstry/internal/manager"
+	"github.com/letstrygo/letstry/internal/manager"
 )
 
 type CommandExecutor func(context.Context, []string) error

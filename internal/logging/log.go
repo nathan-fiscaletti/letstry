@@ -7,7 +7,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/nathan-fiscaletti/letstry/internal/storage"
+	"github.com/letstrygo/letstry/internal/storage"
 )
 
 type LogMode int

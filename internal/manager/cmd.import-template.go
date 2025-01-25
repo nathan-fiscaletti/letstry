@@ -6,7 +6,7 @@ import (
 	"fmt"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/logging"
 )
 
 var (

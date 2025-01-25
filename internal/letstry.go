@@ -3,7 +3,7 @@ package internal
 import (
 	"context"
 
-	"github.com/nathan-fiscaletti/letstry/internal/application"
+	"github.com/letstrygo/letstry/internal/application"
 )
 
 func LetsTry() {

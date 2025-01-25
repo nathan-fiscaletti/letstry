@@ -3,9 +3,9 @@ package sessions
 import (
 	"context"
 
-	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
-	"github.com/nathan-fiscaletti/letstry/internal/cli"
-	"github.com/nathan-fiscaletti/letstry/internal/manager"
+	"github.com/letstrygo/letstry/internal/application/commands"
+	"github.com/letstrygo/letstry/internal/cli"
+	"github.com/letstrygo/letstry/internal/manager"
 )
 
 // NewSessionCommand returns a new command for creating a new session.

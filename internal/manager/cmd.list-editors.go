@@ -3,8 +3,8 @@ package manager
 import (
 	"context"
 
-	"github.com/nathan-fiscaletti/letstry/internal/config"
-	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
+	"github.com/letstrygo/letstry/internal/config"
+	"github.com/letstrygo/letstry/internal/config/editors"
 )
 
 func (s *manager) ListEditors(ctx context.Context) ([]editors.Editor, error) {

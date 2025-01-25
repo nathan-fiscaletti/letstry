@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"github.com/fatih/color"
-	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
-	"github.com/nathan-fiscaletti/letstry/internal/util/access"
-	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
+	"github.com/letstrygo/letstry/internal/config/editors"
+	"github.com/letstrygo/letstry/internal/util/access"
+	"github.com/letstrygo/letstry/internal/util/identifier"
 )
 
 type sessionSource struct {

@@ -1,6 +1,6 @@
 package main
 
-import "github.com/nathan-fiscaletti/letstry/internal"
+import "github.com/letstrygo/letstry/internal"
 
 func main() {
 	internal.LetsTry()

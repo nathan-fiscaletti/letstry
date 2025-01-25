@@ -13,13 +13,13 @@ Letstry requires Go to be installed on your system. If you do not have Go instal
 Once Go is installed, to install letstry, run the following command:
 
 ```sh
-$ go install github.com/nathan-fiscaletti/letstry/cmd/letstry@latest
+$ go install github.com/letstrygo/letstry/cmd/letstry@latest
 ```
 
 If you'd rather use the `lt` alias, you can install it using the following command:
 
 ```sh
-$ go install github.com/nathan-fiscaletti/letstry/cmd/lt@latest
+$ go install github.com/letstrygo/letstry/cmd/lt@latest
 ```
 
 ## Usage

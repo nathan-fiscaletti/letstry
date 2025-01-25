@@ -6,10 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
-	"github.com/nathan-fiscaletti/letstry/internal/cli"
-	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
-	"github.com/nathan-fiscaletti/letstry/internal/manager"
+	"github.com/letstrygo/letstry/internal/application/commands"
+	"github.com/letstrygo/letstry/internal/cli"
+	"github.com/letstrygo/letstry/internal/config/editors"
+	"github.com/letstrygo/letstry/internal/manager"
 )
 
 var (

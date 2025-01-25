@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
-	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
+	"github.com/letstrygo/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/util/identifier"
 )
 
 type CleanSessionArguments struct {

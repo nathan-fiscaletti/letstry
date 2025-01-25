@@ -4,10 +4,10 @@ import (
 	"context"
 
 	"github.com/fatih/color"
-	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
-	"github.com/nathan-fiscaletti/letstry/internal/cli"
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
-	"github.com/nathan-fiscaletti/letstry/internal/manager"
+	"github.com/letstrygo/letstry/internal/application/commands"
+	"github.com/letstrygo/letstry/internal/cli"
+	"github.com/letstrygo/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/manager"
 )
 
 func GetEditorCommand() cli.Command {

@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
-	"github.com/nathan-fiscaletti/letstry/internal/config"
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/config"
+	"github.com/letstrygo/letstry/internal/logging"
 )
 
 var (

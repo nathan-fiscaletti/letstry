@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
+	"github.com/letstrygo/letstry/internal/util/identifier"
 )
 
 var (

@@ -10,10 +10,10 @@ import (
 
 	"github.com/shirou/gopsutil/v3/process"
 
-	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
-	"github.com/nathan-fiscaletti/letstry/internal/util/access"
-	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
+	"github.com/letstrygo/letstry/internal/config/editors"
+	"github.com/letstrygo/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/util/access"
+	"github.com/letstrygo/letstry/internal/util/identifier"
 )
 
 var (

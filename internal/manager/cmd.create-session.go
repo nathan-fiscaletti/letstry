@@ -10,10 +10,10 @@ import (
 	"strings"
 
 	"github.com/go-git/go-git/v5"
-	"github.com/nathan-fiscaletti/letstry/internal/config"
-	"github.com/nathan-fiscaletti/letstry/internal/environment"
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
-	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
+	"github.com/letstrygo/letstry/internal/config"
+	"github.com/letstrygo/letstry/internal/environment"
+	"github.com/letstrygo/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/util/identifier"
 	"github.com/otiai10/copy"
 )
 

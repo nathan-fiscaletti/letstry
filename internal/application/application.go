@@ -7,16 +7,16 @@ import (
 
 	"github.com/fatih/color"
 
-	editor_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/editors"
-	general_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/general"
-	hidden_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/hidden"
-	session_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/sessions"
-	template_commands "github.com/nathan-fiscaletti/letstry/internal/application/commands/templates"
+	editor_commands "github.com/letstrygo/letstry/internal/application/commands/editors"
+	general_commands "github.com/letstrygo/letstry/internal/application/commands/general"
+	hidden_commands "github.com/letstrygo/letstry/internal/application/commands/hidden"
+	session_commands "github.com/letstrygo/letstry/internal/application/commands/sessions"
+	template_commands "github.com/letstrygo/letstry/internal/application/commands/templates"
 
-	"github.com/nathan-fiscaletti/letstry/internal/cli"
-	"github.com/nathan-fiscaletti/letstry/internal/environment"
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
-	"github.com/nathan-fiscaletti/letstry/internal/manager"
+	"github.com/letstrygo/letstry/internal/cli"
+	"github.com/letstrygo/letstry/internal/environment"
+	"github.com/letstrygo/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/manager"
 )
 
 var (

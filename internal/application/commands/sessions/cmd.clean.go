@@ -5,10 +5,10 @@ import (
 
 	"errors"
 
-	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
-	"github.com/nathan-fiscaletti/letstry/internal/cli"
-	"github.com/nathan-fiscaletti/letstry/internal/manager"
-	"github.com/nathan-fiscaletti/letstry/internal/util/identifier"
+	"github.com/letstrygo/letstry/internal/application/commands"
+	"github.com/letstrygo/letstry/internal/cli"
+	"github.com/letstrygo/letstry/internal/manager"
+	"github.com/letstrygo/letstry/internal/util/identifier"
 )
 
 var (

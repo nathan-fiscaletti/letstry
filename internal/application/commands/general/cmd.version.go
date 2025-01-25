@@ -7,8 +7,8 @@ import (
 	"os"
 	"runtime"
 
-	"github.com/nathan-fiscaletti/letstry/internal/application/commands"
-	"github.com/nathan-fiscaletti/letstry/internal/cli"
+	"github.com/letstrygo/letstry/internal/application/commands"
+	"github.com/letstrygo/letstry/internal/cli"
 )
 
 func VersionCommand() cli.Command {

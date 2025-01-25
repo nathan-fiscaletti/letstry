@@ -3,8 +3,8 @@ package application
 import (
 	"os"
 
-	"github.com/nathan-fiscaletti/letstry/internal/cli"
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/cli"
+	"github.com/letstrygo/letstry/internal/logging"
 )
 
 type ApplicationInvocation struct {

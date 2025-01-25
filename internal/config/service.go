@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/nathan-fiscaletti/letstry/internal/config/editors"
-	"github.com/nathan-fiscaletti/letstry/internal/storage"
+	"github.com/letstrygo/letstry/internal/config/editors"
+	"github.com/letstrygo/letstry/internal/storage"
 )
 
 var config *Config

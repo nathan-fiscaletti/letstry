@@ -6,7 +6,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/nathan-fiscaletti/letstry/internal/logging"
+	"github.com/letstrygo/letstry/internal/logging"
 	"github.com/otiai10/copy"
 )
 
